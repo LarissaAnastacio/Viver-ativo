@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viver Ativo - Exercícios Cognitivos e Motores</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            blue: '#1E40AF',
+                            teal: '#0D9488',
+                            orange: '#EA580C',
+                            green: '#15803D',
+                            cream: '#FEF3C7',
+                            bg: '#F8FAFC'
+                        }
+                    },
+                    fontSize: {
+                        'base-lg': '1.125rem',
+                        '2xl-lg': '1.75rem',
+                        '3xl-lg': '2.25rem'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: #F8FAFC;
+            color: #0F172A;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Enhanced focus states for accessibility */
+        button:focus-visible, div[role="button"]:focus-visible {
+            outline: 4px solid #F59E0B;
+            outline-offset: 4px;
+        }
+
+        /* Custom Drag & Drop styling */
+        .draggable-item {
+            touch-action: none;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .draggable-item.dragging {
+            opacity: 0.8;
+            transform: scale(1.08);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            z-index: 50;
+        }
+
+        /* Pulse highlight for targets */
+        @keyframes gentle-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .pulse-target {
+            animation: gentle-pulse 2s infinite ease-in-out;
+        }
+
+        /* Card flip animation for memory game */
+        .card-inner {
+            transition: transform 0.4s ease;
+            transform-style: preserve-3d;
+        }
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-slate-900 bg-slate-50">
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="bg-blue-900 text-white shadow-md p-4 sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchModule('menu')">
+                <div class="bg-amber-400 text-blue-950 p-3 rounded-2xl text-2xl font-bold flex items-center justify-center w-12 h-12 shadow">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-extrabold tracking-wide">Viver Ativo</h1>
+                    <p class="text-blue-200 text-sm font-medium">Exercícios para Cérebro e Corpo</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <button id="btn-audio-toggle" onclick="toggleAudio()" class="bg-blue-800 hover:bg-blue-700 text-white font-bold py-3 px-5 rounded-2xl flex items-center space-x-2 text-lg border-2 border-blue-400 transition" aria-label="Alternar som das instruções">
+                    <i id="audio-icon" class="fa-solid fa-volume-high text-amber-300"></i>
+                    <span id="audio-status-text">Voz: Ligada</span>
+                </button>
+
+                <button id="btn-home" onclick="switchModule('menu')" class="hidden bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold py-3 px-5 rounded-2xl text-lg flex items-center space-x-2 border-2 border-amber-300 transition shadow">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Menu Principal</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-6xl w-full mx-auto p-4 sm:p-6 flex-grow">
+
+        <!-- MAIN MENU -->
+        <section id="module-menu" class="space-y-6">
+            <div class="bg-blue-100 border-l-8 border-blue-600 p-6 rounded-2xl shadow-sm">
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-blue-950 mb-2">Bem-vindo(a) ao Viver Ativo!</h2>
+                <p class="text-lg text-slate-800 leading-relaxed">
+                    Escolha uma atividade abaixo para praticar no seu próprio ritmo. Não há tempo limite nem pressa. Divirta-se!
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Module 1 Card -->
+                <div onclick="switchModule('ambiente')" class="bg-white hover:bg-amber-50 border-4 border-slate-200 hover:border-amber-400 rounded-3xl p-6 cursor-pointer shadow-lg hover:shadow-xl transition flex flex-col justify-between group">
+                    <div class="flex items-start space-x-5">
+                        <div class="bg-emerald-100 text-emerald-800 p-5 rounded-2xl text-4xl group-hover:scale-110 transition">
+                            <i class="fa-solid fa-house-user"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full">Associação</span>
+                            <h3 class="text-2xl font-bold text-slate-900 mt-2">1. Onde Guardar?</h3>
+                            <p class="text-slate-600 text-base mt-2">Ligue cada objeto ao seu ambiente correto na casa (Cozinha, Banheiro, Quarto).</p>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-end">
+                        <span class="bg-emerald-600 text-white font-bold py-3 px-6 rounded-2xl text-lg flex items-center gap-2 group-hover:bg-emerald-700">
+                            Iniciar <i class="fa-solid fa-arrow-right"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Module 2 Card -->
+                <div onclick="switchModule('cores')" class="bg-white hover:bg-amber-50 border-4 border-slate-200 hover:border-amber-400 rounded-3xl p-6 cursor-pointer shadow-lg hover:shadow-xl transition flex flex-col justify-between group">
+                    <div class="flex items-start space-x-5">
+                        <div class="bg-blue-100 text-blue-800 p-5 rounded-2xl text-4xl group-hover:scale-110 transition">
+                            <i class="fa-solid fa-palette"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-extrabold uppercase tracking-wider text-blue-700 bg-blue-100 px-3 py-1 rounded-full">Memória Visual</span>
+                            <h3 class="text-2xl font-bold text-slate-900 mt-2">2. Jogo das Cores</h3>
+                            <p class="text-slate-600 text-base mt-2">Encontre os pares de cores iguais. Possui nomes legíveis e formas associadas.</p>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-end">
+                        <span class="bg-blue-600 text-white font-bold py-3 px-6 rounded-2xl text-lg flex items-center gap-2 group-hover:bg-blue-700">
+                            Iniciar <i class="fa-solid fa-arrow-right"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Module 3 Card -->
+                <div onclick="switchModule('global')" class="bg-white hover:bg-amber-50 border-4 border-slate-200 hover:border-amber-400 rounded-3xl p-6 cursor-pointer shadow-lg hover:shadow-xl transition flex flex-col justify-between group">
+                    <div class="flex items-start space-x-5">
+                        <div class="bg-orange-100 text-orange-800 p-5 rounded-2xl text-4xl group-hover:scale-110 transition">
+                            <i class="fa-solid fa-bullseye"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-extrabold uppercase tracking-wider text-orange-700 bg-orange-100 px-3 py-1 rounded-full">Coordenação Global</span>
+                            <h3 class="text-2xl font-bold text-slate-900 mt-2">3. Movimento Aberto</h3>
+                            <p class="text-slate-600 text-base mt-2">Toque ou clique nas grandes esferas iluminadas que surgem na tela.</p>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-end">
+                        <span class="bg-orange-600 text-white font-bold py-3 px-6 rounded-2xl text-lg flex items-center gap-2 group-hover:bg-orange-700">
+                            Iniciar <i class="fa-solid fa-arrow-right"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Module 4 Card -->
+                <div onclick="switchModule('fina')" class="bg-white hover:bg-amber-50 border-4 border-slate-200 hover:border-amber-400 rounded-3xl p-6 cursor-pointer shadow-lg hover:shadow-xl transition flex flex-col justify-between group">
+                    <div class="flex items-start space-x-5">
+                        <div class="bg-purple-100 text-purple-800 p-5 rounded-2xl text-4xl group-hover:scale-110 transition">
+                            <i class="fa-solid fa-pen-ruler"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-extrabold uppercase tracking-wider text-purple-700 bg-purple-100 px-3 py-1 rounded-full">Coordenação Fina</span>
+                            <h3 class="text-2xl font-bold text-slate-900 mt-2">4. Trilha Precisa</h3>
+                            <p class="text-slate-600 text-base mt-2">Guie o círculo com firmeza seguindo os caminhos desenhados na tela.</p>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-end">
+                        <span class="bg-purple-600 text-white font-bold py-3 px-6 rounded-2xl text-lg flex items-center gap-2 group-hover:bg-purple-700">
+                            Iniciar <i class="fa-solid fa-arrow-right"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MODULE 1: ONDE GUARDAR? (Associação) -->
+        <section id="module-ambiente" class="hidden space-y-6">
+            <div class="bg-emerald-800 text-white p-6 rounded-3xl shadow-md flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-3xl font-extrabold flex items-center gap-3">
+                        <i class="fa-solid fa-house-user text-amber-300"></i>
+                        Onde Guardar?
+                    </h2>
+                    <p class="text-emerald-100 text-lg mt-1">Clique num objeto e depois toque no cômodo correto para guardá-lo.</p>
+                </div>
+                <button onclick="speakInstruction('Clique ou toque no objeto e depois escolha em qual cômodo ele deve ser guardado.')" class="bg-emerald-700 hover:bg-emerald-600 text-amber-200 font-bold px-4 py-2 rounded-xl flex items-center gap-2 border border-emerald-500">
+                    <i class="fa-solid fa-volume-high"></i> Ouvir instrução
+                </button>
+            </div>
+
+            <!-- Current Object to Place -->
+            <div class="bg-amber-50 border-4 border-amber-300 p-6 rounded-3xl text-center space-y-4 shadow-inner">
+                <p class="text-slate-700 font-bold text-xl uppercase tracking-wide">Objeto Selecionado:</p>
+                <div id="active-item-container" class="inline-flex flex-col items-center justify-center bg-white p-6 rounded-2xl border-2 border-amber-400 shadow-md min-w-[200px]">
+                    <i id="active-item-icon" class="fa-solid fa-toothbrush text-6xl text-emerald-600 mb-2"></i>
+                    <span id="active-item-name" class="text-2xl font-extrabold text-slate-900">Escova de Dentes</span>
+                </div>
+                <p class="text-slate-600 font-medium text-lg">Em qual destes ambientes este objeto deve ficar?</p>
+            </div>
+
+            <!-- Target Rooms -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="rooms-container">
+                <!-- Banheiro -->
+                <button onclick="checkRoomChoice('banheiro')" class="room-btn bg-white hover:bg-blue-50 border-4 border-blue-400 hover:border-blue-600 rounded-3xl p-6 flex flex-col items-center justify-center space-y-4 shadow-lg active:scale-95 transition min-h-[200px]">
+                    <div class="bg-blue-100 text-blue-800 p-5 rounded-full text-4xl">
+                        <i class="fa-solid fa-bath"></i>
+                    </div>
+                    <span class="text-2xl font-black text-slate-900">BANHEIRO</span>
+                    <span class="text-xs font-bold text-blue-700 bg-blue-100 px-3 py-1 rounded-full">Guardar aqui</span>
+                </button>
+
+                <!-- Cozinha -->
+                <button onclick="checkRoomChoice('cozinha')" class="room-btn bg-white hover:bg-amber-50 border-4 border-amber-400 hover:border-amber-600 rounded-3xl p-6 flex flex-col items-center justify-center space-y-4 shadow-lg active:scale-95 transition min-h-[200px]">
+                    <div class="bg-amber-100 text-amber-800 p-5 rounded-full text-4xl">
+                        <i class="fa-solid fa-utensils"></i>
+                    </div>
+                    <span class="text-2xl font-black text-slate-900">COZINHA</span>
+                    <span class="text-xs font-bold text-amber-800 bg-amber-100 px-3 py-1 rounded-full">Guardar aqui</span>
+                </button>
+
+                <!-- Quarto -->
+                <button onclick="checkRoomChoice('quarto')" class="room-btn bg-white hover:bg-purple-50 border-4 border-purple-400 hover:border-purple-600 rounded-3xl p-6 flex flex-col items-center justify-center space-y-4 shadow-lg active:scale-95 transition min-h-[200px]">
+                    <div class="bg-purple-100 text-purple-800 p-5 rounded-full text-4xl">
+                        <i class="fa-solid fa-bed"></i>
+                    </div>
+                    <span class="text-2xl font-black text-slate-900">QUARTO</span>
+                    <span class="text-xs font-bold text-purple-700 bg-purple-100 px-3 py-1 rounded-full">Guardar aqui</span>
+                </button>
+
+                <!-- Sala -->
+                <button onclick="checkRoomChoice('sala')" class="room-btn bg-white hover:bg-rose-50 border-4 border-rose-400 hover:border-rose-600 rounded-3xl p-6 flex flex-col items-center justify-center space-y-4 shadow-lg active:scale-95 transition min-h-[200px]">
+                    <div class="bg-rose-100 text-rose-800 p-5 rounded-full text-4xl">
+                        <i class="fa-solid fa-tv"></i>
+                    </div>
+                    <span class="text-2xl font-black text-slate-900">SALA</span>
+                    <span class="text-xs font-bold text-rose-700 bg-rose-100 px-3 py-1 rounded-full">Guardar aqui</span>
+                </button>
+            </div>
+
+            <!-- Score & Progress -->
+            <div class="bg-slate-200 p-4 rounded-2xl flex items-center justify-between text-xl font-bold">
+                <span>Objetos Organizados: <span id="ambiente-score" class="text-emerald-700 font-extrabold">0</span></span>
+                <button onclick="resetAmbienteGame()" class="bg-slate-700 hover:bg-slate-800 text-white px-5 py-2 rounded-xl text-base">Novo Objeto</button>
+            </div>
+        </section>
+
+        <!-- MODULE 2: JOGO DAS CORES (Cognição de Cores) -->
+        <section id="module-cores" class="hidden space-y-6">
+            <div class="bg-blue-800 text-white p-6 rounded-3xl shadow-md flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-3xl font-extrabold flex items-center gap-3">
+                        <i class="fa-solid fa-palette text-amber-300"></i>
+                        Jogo das Cores
+                    </h2>
+                    <p class="text-blue-100 text-lg mt-1">Vire as cartas e encontre os pares de cores iguais.</p>
+                </div>
+                <button onclick="speakInstruction('Vire duas cartas por vez para encontrar as cores correspondentes.')" class="bg-blue-700 hover:bg-blue-600 text-amber-200 font-bold px-4 py-2 rounded-xl flex items-center gap-2 border border-blue-500">
+                    <i class="fa-solid fa-volume-high"></i> Ouvir instrução
+                </button>
+            </div>
+
+            <!-- Memory Grid -->
+            <div id="color-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
+                <!-- Memory Cards Dynamically Rendered Here -->
+            </div>
+
+            <!-- Status and Restart -->
+            <div class="bg-slate-200 p-4 rounded-2xl flex items-center justify-between text-xl font-bold">
+                <span>Pares Encontrados: <span id="cores-score" class="text-blue-700 font-extrabold">0 / 4</span></span>
+                <button onclick="initCoresGame()" class="bg-blue-700 hover:bg-blue-800 text-white px-6 py-3 rounded-2xl text-lg shadow">
+                    <i class="fa-solid fa-rotate-right mr-2"></i> Reiniciar Jogo
+                </button>
+            </div>
+        </section>
+
+        <!-- MODULE 3: MOVIMENTO ABERTO (Coordenação Motora Global) -->
+        <section id="module-global" class="hidden space-y-6">
+            <div class="bg-orange-800 text-white p-6 rounded-3xl shadow-md flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-3xl font-extrabold flex items-center gap-3">
+                        <i class="fa-solid fa-bullseye text-amber-300"></i>
+                        Movimento Aberto
+                    </h2>
+                    <p class="text-orange-100 text-lg mt-1">Toque no grande círculo colorido que surgir na área abaixo.</p>
+                </div>
+                <button onclick="speakInstruction('Toque na grande esfera colorida assim que ela aparecer na área de jogo.')" class="bg-orange-700 hover:bg-orange-600 text-amber-200 font-bold px-4 py-2 rounded-xl flex items-center gap-2 border border-orange-500">
+                    <i class="fa-solid fa-volume-high"></i> Ouvir instrução
+                </button>
+            </div>
+
+            <!-- Large Target Playground -->
+            <div id="global-playground" class="relative bg-amber-50 border-4 border-orange-300 rounded-3xl min-h-[400px] h-[60vh] flex items-center justify-center overflow-hidden shadow-inner cursor-pointer">
+                <!-- Target Circle -->
+                <button id="global-target" onclick="hitGlobalTarget(event)" class="absolute pulse-target bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 border-8 border-white rounded-full flex flex-col items-center justify-center shadow-2xl transform active:scale-95 transition-all text-white cursor-pointer" style="width: 140px; height: 140px;">
+                    <i class="fa-solid fa-hand-pointer text-4xl mb-1"></i>
+                    <span class="font-black text-xl">TOQUE!</span>
+                </button>
+            </div>
+
+            <div class="bg-slate-200 p-4 rounded-2xl flex items-center justify-between text-xl font-bold">
+                <span>Toques com Sucesso: <span id="global-score" class="text-orange-700 font-extrabold">0</span></span>
+                <span class="text-slate-600 text-base">Alvo amplo e tolerante</span>
+            </div>
+        </section>
+
+        <!-- MODULE 4: TRILHA PRECISA (Coordenação Motora Fina) -->
+        <section id="module-fina" class="hidden space-y-6">
+            <div class="bg-purple-800 text-white p-6 rounded-3xl shadow-md flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-3xl font-extrabold flex items-center gap-3">
+                        <i class="fa-solid fa-pen-ruler text-amber-300"></i>
+                        Trilha Precisa
+                    </h2>
+                    <p class="text-purple-100 text-lg mt-1">Arraste a bola azul do início (ponto verde) até a chegada (ponto vermelho).</p>
+                </div>
+                <button onclick="speakInstruction('Arraste a bolinha do ponto verde inicial até o ponto vermelho final seguindo o caminho.')" class="bg-purple-700 hover:bg-purple-600 text-amber-200 font-bold px-4 py-2 rounded-xl flex items-center gap-2 border border-purple-500">
+                    <i class="fa-solid fa-volume-high"></i> Ouvir instrução
+                </button>
+            </div>
+
+            <!-- Canvas Container -->
+            <div class="bg-white border-4 border-purple-300 rounded-3xl p-4 shadow-lg flex flex-col items-center space-y-4">
+                <canvas id="fine-motor-canvas" class="w-full max-w-2xl h-[350px] bg-purple-50 rounded-2xl cursor-crosshair border-2 border-purple-200 touch-none"></canvas>
+
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button onclick="setTrackType('straight')" class="bg-purple-100 hover:bg-purple-200 text-purple-900 border-2 border-purple-400 font-bold py-3 px-6 rounded-2xl text-lg">
+                        Caminho Reto
+                    </button>
+                    <button onclick="setTrackType('curved')" class="bg-purple-100 hover:bg-purple-200 text-purple-900 border-2 border-purple-400 font-bold py-3 px-6 rounded-2xl text-lg">
+                        Caminho Curvo
+                    </button>
+                    <button onclick="setTrackType('zigzag')" class="bg-purple-100 hover:bg-purple-200 text-purple-900 border-2 border-purple-400 font-bold py-3 px-6 rounded-2xl text-lg">
+                        Caminho Zig-Zag
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-slate-200 p-4 rounded-2xl flex items-center justify-between text-xl font-bold">
+                <span>Trilhas Concluídas: <span id="fina-score" class="text-purple-700 font-extrabold">0</span></span>
+                <button onclick="resetFineTrack()" class="bg-purple-700 hover:bg-purple-800 text-white px-5 py-2 rounded-xl text-base">Reiniciar Trilha</button>
+            </div>
+        </section>
+
+        <!-- FEEDBACK BANNER / TOAST -->
+        <div id="feedback-toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white px-8 py-5 rounded-3xl shadow-2xl border-4 border-amber-400 flex items-center space-x-4 opacity-0 pointer-events-none transition-all duration-300 z-50">
+            <i id="feedback-icon" class="fa-solid fa-star text-amber-400 text-4xl"></i>
+            <span id="feedback-text" class="text-2xl font-black tracking-wide">Muito Bem!</span>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-800 text-slate-300 p-6 text-center text-base border-t-4 border-slate-700 mt-8">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p class="font-medium text-lg">&copy; 2026 Larissa da Silva Anastácio. Todos os direitos reservados.</p>
+            <div class="flex items-center space-x-6 text-sm">
+                <span class="flex items-center gap-2"><i class="fa-solid fa-universal-access text-amber-400"></i> Alto Contraste</span>
+                <span class="flex items-center gap-2"><i class="fa-solid fa-clock text-amber-400"></i> Sem Pressa</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /* ===================================================
+           GLOBAL STATE & AUDIO SYNTHESIS
+           =================================================== */
+        let audioEnabled = true;
+        let currentModule = 'menu';
+
+        function speakInstruction(text) {
+            if (!audioEnabled || !('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel(); // Stop any ongoing speech
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'pt-BR';
+            utterance.rate = 0.9; // Slightly slower for clarity
+            utterance.pitch = 1.0;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function playChime(success = true) {
+            if (!audioEnabled) return;
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+
+                osc.type = 'sine';
+                if (success) {
+                    osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+                    osc.frequency.exponentialRampToValueAtTime(659.25, ctx.currentTime + 0.15); // E5
+                    osc.frequency.exponentialRampToValueAtTime(783.99, ctx.currentTime + 0.3); // G5
+                } else {
+                    osc.frequency.setValueAtTime(220, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(180, ctx.currentTime + 0.2);
+                }
+
+                gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.4);
+            } catch (e) {
+                // AudioContext fallback
+            }
+        }
+
+        function toggleAudio() {
+            audioEnabled = !audioEnabled;
+            const statusText = document.getElementById('audio-status-text');
+            const icon = document.getElementById('audio-icon');
+
+            if (audioEnabled) {
+                statusText.textContent = 'Voz: Ligada';
+                icon.className = 'fa-solid fa-volume-high text-amber-300';
+                speakInstruction('Voz ativada.');
+            } else {
+                statusText.textContent = 'Voz: Desligada';
+                icon.className = 'fa-solid fa-volume-xmark text-slate-400';
+                window.speechSynthesis.cancel();
+            }
+        }
+
+        function showFeedback(message, isSuccess = true) {
+            const toast = document.getElementById('feedback-toast');
+            const toastText = document.getElementById('feedback-text');
+            const toastIcon = document.getElementById('feedback-icon');
+
+            toastText.textContent = message;
+
+            if (isSuccess) {
+                toastIcon.className = 'fa-solid fa-circle-check text-emerald-400 text-4xl';
+                toast.className = toast.className.replace(/border-[a-z]+-\d+/, 'border-emerald-400');
+                playChime(true);
+                if (typeof confetti === 'function') {
+                    confetti({ particleCount: 40, spread: 60, origin: { y: 0.8 } });
+                }
+            } else {
+                toastIcon.className = 'fa-solid fa-circle-info text-amber-400 text-4xl';
+                toast.className = toast.className.replace(/border-[a-z]+-\d+/, 'border-amber-400');
+                playChime(false);
+            }
+
+            speakInstruction(message);
+
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            toast.classList.add('opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 2500);
+        }
+
+        function switchModule(moduleId) {
+            currentModule = moduleId;
+
+            // Hide all modules
+            document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
+
+            // Show target module
+            const target = document.getElementById(`module-${moduleId}`);
+            if (target) target.classList.remove('hidden');
+
+            const btnHome = document.getElementById('btn-home');
+            if (moduleId === 'menu') {
+                btnHome.classList.add('hidden');
+                speakInstruction('Menu principal. Escolha uma atividade.');
+            } else {
+                btnHome.classList.remove('hidden');
+            }
+
+            // Init module specific logic
+            if (moduleId === 'ambiente') initAmbienteGame();
+            if (moduleId === 'cores') initCoresGame();
+            if (moduleId === 'global') initGlobalGame();
+            if (moduleId === 'fina') initFineMotorGame();
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /* ===================================================
+           MODULE 1: ONDE GUARDAR? (Associação)
+           =================================================== */
+        const ambienteItems = [
+            { name: 'Escova de Dentes', room: 'banheiro', icon: 'fa-toothbrush', color: 'text-blue-600' },
+            { name: 'Frigideira', room: 'cozinha', icon: 'fa-kitchen-set', color: 'text-amber-700' },
+            { name: 'Travesseiro', room: 'quarto', icon: 'fa-mattress-pillow', color: 'text-purple-600' },
+            { name: 'Controle Remoto da TV', room: 'sala', icon: 'fa-tv', color: 'text-rose-600' },
+            { name: 'Sabonete', room: 'banheiro', icon: 'fa-soap', color: 'text-teal-600' },
+            { name: 'Prato e Talheres', room: 'cozinha', icon: 'fa-utensils', color: 'text-orange-600' },
+            { name: 'Abajur', room: 'quarto', icon: 'fa-lightbulb', color: 'text-yellow-600' },
+            { name: 'Almofada do Sofá', room: 'sala', icon: 'fa-couch', color: 'text-red-600' }
+        ];
+
+        let currentAmbienteIndex = 0;
+        let ambienteScoreCount = 0;
+
+        function initAmbienteGame() {
+            currentAmbienteIndex = Math.floor(Math.random() * ambienteItems.length);
+            updateAmbienteUI();
+        }
+
+        function updateAmbienteUI() {
+            const item = ambienteItems[currentAmbienteIndex];
+            const nameEl = document.getElementById('active-item-name');
+            const iconEl = document.getElementById('active-item-icon');
+
+            nameEl.textContent = item.name;
+            iconEl.className = `fa-solid ${item.icon} text-6xl ${item.color} mb-2`;
+
+            speakInstruction(`Onde devemos guardar: ${item.name}?`);
+        }
+
+        function checkRoomChoice(roomName) {
+            const currentItem = ambienteItems[currentAmbienteIndex];
+            if (roomName === currentItem.room) {
+                ambienteScoreCount++;
+                document.getElementById('ambiente-score').textContent = ambienteScoreCount;
+                showFeedback(`Correto! O objeto ${currentItem.name} fica no ${roomName}!`, true);
+                setTimeout(nextAmbienteItem, 2000);
+            } else {
+                showFeedback(`Tente novamente. Pense bem em qual cômodo usamos este objeto.`, false);
+            }
+        }
+
+        function nextAmbienteItem() {
+            currentAmbienteIndex = (currentAmbienteIndex + 1) % ambienteItems.length;
+            updateAmbienteUI();
+        }
+
+        function resetAmbienteGame() {
+            ambienteScoreCount = 0;
+            document.getElementById('ambiente-score').textContent = '0';
+            initAmbienteGame();
+        }
+
+        /* ===================================================
+           MODULE 2: JOGO DAS CORES (Cognição de Cores)
+           =================================================== */
+        const colorPalette = [
+            { id: 'vermelho', name: 'Vermelho', bg: 'bg-red-600', text: 'text-red-700', shape: 'fa-square' },
+            { id: 'azul', name: 'Azul', bg: 'bg-blue-600', text: 'text-blue-700', shape: 'fa-circle' },
+            { id: 'amarelo', name: 'Amarelo', bg: 'bg-yellow-400', text: 'text-yellow-700', shape: 'fa-triangle-exclamation' },
+            { id: 'verde', name: 'Verde', bg: 'bg-emerald-600', text: 'text-emerald-700', shape: 'fa-star' }
+        ];
+
+        let cardsArray = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let isProcessing = false;
+
+        function initCoresGame() {
+            matchedPairs = 0;
+            flippedCards = [];
+            isProcessing = false;
+            document.getElementById('cores-score').textContent = `0 / ${colorPalette.length}`;
+
+            // Duplicate array for matching pairs
+            cardsArray = [...colorPalette, ...colorPalette]
+                .map((item, index) => ({ ...item, uniqueId: index }))
+                .sort(() => Math.random() - 0.5);
+
+            const grid = document.getElementById('color-grid');
+            grid.innerHTML = '';
+
+            cardsArray.forEach((card, idx) => {
+                const cardEl = document.createElement('div');
+                cardEl.className = 'card cursor-pointer h-40 sm:h-48 perspective';
+                cardEl.setAttribute('role', 'button');
+                cardEl.setAttribute('aria-label', `Carta ${idx + 1}`);
+                cardEl.onclick = () => flipCard(cardEl, card);
+
+                cardEl.innerHTML = `
+                    <div class="card-inner relative w-full h-full rounded-3xl shadow-lg border-4 border-slate-300 bg-white">
+                        <!-- FRONT (HIDDEN) -->
+                        <div class="card-front absolute inset-0 flex flex-col items-center justify-center bg-blue-900 rounded-2xl text-amber-300">
+                            <i class="fa-solid fa-question text-5xl"></i>
+                            <span class="text-sm font-bold mt-2 text-white">Toque aqui</span>
+                        </div>
+                        <!-- BACK (REVEALED) -->
+                        <div class="card-back absolute inset-0 flex flex-col items-center justify-center rounded-2xl ${card.bg} text-white p-2">
+                            <i class="fa-solid ${card.shape} text-5xl mb-2 filter drop-shadow"></i>
+                            <span class="text-2xl font-black bg-white/90 text-slate-900 px-3 py-1 rounded-xl shadow">${card.name}</span>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(cardEl);
+            });
+
+            speakInstruction('Jogo das Cores iniciado. Vire as cartas para achar os pares.');
+        }
+
+        function flipCard(cardEl, cardObj) {
+            if (isProcessing || cardEl.classList.contains('flipped') || flippedCards.length >= 2) return;
+
+            cardEl.classList.add('flipped');
+            flippedCards.push({ element: cardEl, data: cardObj });
+
+            speakInstruction(cardObj.name);
+
+            if (flippedCards.length === 2) {
+                checkColorMatch();
+            }
+        }
+
+        function checkColorMatch() {
+            isProcessing = true;
+            const [card1, card2] = flippedCards;
+
+            if (card1.data.id === card2.data.id) {
+                matchedPairs++;
+                document.getElementById('cores-score').textContent = `${matchedPairs} / ${colorPalette.length}`;
+                showFeedback(`Par de ${card1.data.name} encontrado!`, true);
+                flippedCards = [];
+                isProcessing = false;
+
+                if (matchedPairs === colorPalette.length) {
+                    setTimeout(() => {
+                        showFeedback('Parabéns! Você encontrou todas as cores!', true);
+                    }, 800);
+                }
+            } else {
+                setTimeout(() => {
+                    card1.element.classList.remove('flipped');
+                    card2.element.classList.remove('flipped');
+                    flippedCards = [];
+                    isProcessing = false;
+                }, 1400);
+            }
+        }
+
+        /* ===================================================
+           MODULE 3: MOVIMENTO ABERTO (Coordenação Global)
+           =================================================== */
+        let globalScoreCount = 0;
+
+        function initGlobalGame() {
+            globalScoreCount = 0;
+            document.getElementById('global-score').textContent = '0';
+            moveTargetToRandomPosition();
+            speakInstruction('Movimento Aberto. Toque na grande esfera que surgir.');
+        }
+
+        function moveTargetToRandomPosition() {
+            const container = document.getElementById('global-playground');
+            const target = document.getElementById('global-target');
+
+            const cRect = container.getBoundingClientRect();
+            const targetSize = 140; // width & height of target
+
+            const maxX = Math.max(0, cRect.width - targetSize - 40);
+            const maxY = Math.max(0, cRect.height - targetSize - 40);
+
+            const randomX = 20 + Math.floor(Math.random() * maxX);
+            const randomY = 20 + Math.floor(Math.random() * maxY);
+
+            target.style.left = `${randomX}px`;
+            target.style.top = `${randomY}px`;
+        }
+
+        function hitGlobalTarget(event) {
+            event.stopPropagation();
+            globalScoreCount++;
+            document.getElementById('global-score').textContent = globalScoreCount;
+            showFeedback('Excelente toque!', true);
+            moveTargetToRandomPosition();
+        }
+
+        /* ===================================================
+           MODULE 4: TRILHA PRECISA (Coordenação Fina)
+           =================================================== */
+        let canvas, ctx;
+        let isDraggingTrack = false;
+        let fineScoreCount = 0;
+        let trackType = 'straight'; // 'straight', 'curved', 'zigzag'
+
+        let startPoint = { x: 80, y: 175 };
+        let endPoint = { x: 520, y: 175 };
+        let handlePos = { x: 80, y: 175 };
+
+        function initFineMotorGame() {
+            canvas = document.getElementById('fine-motor-canvas');
+            ctx = canvas.getContext('2d');
+
+            // Set canvas dynamic resolution
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+
+            resetFineTrack();
+
+            // Event Listeners for Touch and Mouse
+            canvas.onmousedown = startDrag;
+            canvas.onmousemove = doDrag;
+            canvas.onmouseup = stopDrag;
+
+            canvas.ontouchstart = (e) => { startDrag(e.touches[0]); };
+            canvas.ontouchmove = (e) => { doDrag(e.touches[0]); e.preventDefault(); };
+            canvas.ontouchend = stopDrag;
+
+            speakInstruction('Trilha Precisa. Guie a bolinha azul até a chegada.');
+        }
+
+        function setTrackType(type) {
+            trackType = type;
+            resetFineTrack();
+        }
+
+        function resetFineTrack() {
+            const w = canvas.width;
+            const h = canvas.height;
+
+            startPoint = { x: 70, y: h / 2 };
+            endPoint = { x: w - 70, y: h / 2 };
+            handlePos = { ...startPoint };
+
+            drawFineTrack();
+        }
+
+        function drawFineTrack() {
+            if (!ctx) return;
+            const w = canvas.width;
+            const h = canvas.height;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // Draw Background Track Line (Thick & Clear)
+            ctx.beginPath();
+            ctx.lineWidth = 44;
+            ctx.strokeStyle = '#E9D5FF'; // Soft Purple
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            if (trackType === 'straight') {
+                ctx.moveTo(startPoint.x, startPoint.y);
+                ctx.lineTo(endPoint.x, endPoint.y);
+            } else if (trackType === 'curved') {
+                ctx.moveTo(startPoint.x, startPoint.y);
+                ctx.quadraticCurveTo(w / 2, h / 4, endPoint.x, endPoint.y);
+            } else if (trackType === 'zigzag') {
+                ctx.moveTo(startPoint.x, startPoint.y);
+                ctx.lineTo(w * 0.35, h * 0.25);
+                ctx.lineTo(w * 0.65, h * 0.75);
+                ctx.lineTo(endPoint.x, endPoint.y);
+            }
+            ctx.stroke();
+
+            // Draw Center Guideline
+            ctx.beginPath();
+            ctx.lineWidth = 6;
+            ctx.strokeStyle = '#9333EA';
+            if (trackType === 'straight') {
+                ctx.moveTo(startPoint.x, startPoint.y);
+                ctx.lineTo(endPoint.x, endPoint.y);
+            } else if (trackType === 'curved') {
+                ctx.moveTo(startPoint.x, startPoint.y);
+                ctx.quadraticCurveTo(w / 2, h / 4, endPoint.x, endPoint.y);
+            } else if (trackType === 'zigzag') {
+                ctx.moveTo(startPoint.x, startPoint.y);
+                ctx.lineTo(w * 0.35, h * 0.25);
+                ctx.lineTo(w * 0.65, h * 0.75);
+                ctx.lineTo(endPoint.x, endPoint.y);
+            }
+            ctx.stroke();
+
+            // Start Target (Green Circle)
+            ctx.beginPath();
+            ctx.arc(startPoint.x, startPoint.y, 28, 0, Math.PI * 2);
+            ctx.fillStyle = '#16A34A';
+            ctx.fill();
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = '#FFFFFF';
+            ctx.stroke();
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('INÍCIO', startPoint.x, startPoint.y + 5);
+
+            // End Target (Red Circle)
+            ctx.beginPath();
+            ctx.arc(endPoint.x, endPoint.y, 28, 0, Math.PI * 2);
+            ctx.fillStyle = '#DC2626';
+            ctx.fill();
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = '#FFFFFF';
+            ctx.stroke();
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillText('FIM', endPoint.x, endPoint.y + 5);
+
+            // User Draggable Handle (Blue Glowing Circle)
+            ctx.beginPath();
+            ctx.arc(handlePos.x, handlePos.y, 24, 0, Math.PI * 2);
+            ctx.fillStyle = '#2563EB';
+            ctx.fill();
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = '#F59E0B';
+            ctx.stroke();
+        }
+
+        function getCanvasCoords(e) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+        }
+
+        function startDrag(e) {
+            const pos = getCanvasCoords(e);
+            const dist = Math.hypot(pos.x - handlePos.x, pos.y - handlePos.y);
+            if (dist < 40) { // Large touch tolerance
+                isDraggingTrack = true;
+            }
+        }
+
+        function doDrag(e) {
+            if (!isDraggingTrack) return;
+            const pos = getCanvasCoords(e);
+
+            handlePos.x = pos.x;
+            handlePos.y = pos.y;
+            drawFineTrack();
+
+            // Check arrival at endpoint with generous radius
+            const distToEnd = Math.hypot(handlePos.x - endPoint.x, handlePos.y - endPoint.y);
+            if (distToEnd < 35) {
+                isDraggingTrack = false;
+                fineScoreCount++;
+                document.getElementById('fina-score').textContent = fineScoreCount;
+                showFeedback('Parabéns! Trilha percorrida com sucesso!', true);
+                setTimeout(resetFineTrack, 1500);
+            }
+        }
+
+        function stopDrag() {
+            isDraggingTrack = false;
+        }
+
+        // Initialize default view on page load
+        window.onload = function() {
+            switchModule('menu');
+        };
+    </script>
+</body>
+</html>

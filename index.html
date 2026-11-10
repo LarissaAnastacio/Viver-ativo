@@ -1,881 +1,947 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Viver Ativo - Exercícios Cognitivos e Motores</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Canvas Confetti -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            blue: '#1E40AF',
-                            teal: '#0D9488',
-                            orange: '#EA580C',
-                            green: '#15803D',
-                            cream: '#FEF3C7',
-                            bg: '#F8FAFC'
-                        }
-                    },
-                    fontSize: {
-                        'base-lg': '1.125rem',
-                        '2xl-lg': '1.75rem',
-                        '3xl-lg': '2.25rem'
-                    }
-                }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Viver Ativo & Cognitivo - Estímulo Multissensorial e Motor</title>
+  
+  <!-- Fontes Google para alta legibilidade -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Atkinson Hyperlegible"', 'sans-serif'],
+            heading: ['Fredoka', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              navy: '#1E293B',
+              blue: '#0284C7',
+              teal: '#0D9488',
+              green: '#16A34A',
+              amber: '#D97706',
+              purple: '#7C3AED',
+              rose: '#E11D48',
+              bg: '#F8FAFC'
             }
+          }
         }
-    </script>
-    <style>
-        body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background-color: #F8FAFC;
-            color: #0F172A;
-            user-select: none;
-            -webkit-user-select: none;
-        }
+      }
+    }
+  </script>
 
-        /* Enhanced focus states for accessibility */
-        button:focus-visible, div[role="button"]:focus-visible {
-            outline: 4px solid #F59E0B;
-            outline-offset: 4px;
-        }
-
-        /* Custom Drag & Drop styling */
-        .draggable-item {
-            touch-action: none;
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
-        }
-        .draggable-item.dragging {
-            opacity: 0.8;
-            transform: scale(1.08);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
-            z-index: 50;
-        }
-
-        /* Pulse highlight for targets */
-        @keyframes gentle-pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        .pulse-target {
-            animation: gentle-pulse 2s infinite ease-in-out;
-        }
-
-        /* Card flip animation for memory game */
-        .card-inner {
-            transition: transform 0.4s ease;
-            transform-style: preserve-3d;
-        }
-        .card.flipped .card-inner {
-            transform: rotateY(180deg);
-        }
-        .card-front, .card-back {
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-        }
-        .card-back {
-            transform: rotateY(180deg);
-        }
-    </style>
+  <style>
+    body {
+      background-color: #F8FAFC;
+      color: #0F172A;
+      user-select: none;
+    }
+    .btn-senior {
+      transition: transform 0.15s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+      touch-action: manipulation;
+    }
+    .btn-senior:active {
+      transform: scale(0.96);
+    }
+    .focus-ring:focus-visible {
+      outline: 4px solid #2563EB;
+      outline-offset: 4px;
+    }
+  </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between text-slate-900 bg-slate-50">
+<body class="min-h-screen flex flex-col font-sans text-slate-900 bg-slate-50">
 
-    <!-- HEADER / NAVIGATION -->
-    <header class="bg-blue-900 text-white shadow-md p-4 sticky top-0 z-40">
-        <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4">
-            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchModule('menu')">
-                <div class="bg-amber-400 text-blue-950 p-3 rounded-2xl text-2xl font-bold flex items-center justify-center w-12 h-12 shadow">
-                    <i class="fa-solid fa-heart-pulse"></i>
-                </div>
-                <div>
-                    <h1 class="text-2xl font-extrabold tracking-wide">Viver Ativo</h1>
-                    <p class="text-blue-200 text-sm font-medium">Exercícios para Cérebro e Corpo</p>
-                </div>
-            </div>
-
-            <div class="flex items-center space-x-3">
-                <button id="btn-audio-toggle" onclick="toggleAudio()" class="bg-blue-800 hover:bg-blue-700 text-white font-bold py-3 px-5 rounded-2xl flex items-center space-x-2 text-lg border-2 border-blue-400 transition" aria-label="Alternar som das instruções">
-                    <i id="audio-icon" class="fa-solid fa-volume-high text-amber-300"></i>
-                    <span id="audio-status-text">Voz: Ligada</span>
-                </button>
-
-                <button id="btn-home" onclick="switchModule('menu')" class="hidden bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold py-3 px-5 rounded-2xl text-lg flex items-center space-x-2 border-2 border-amber-300 transition shadow">
-                    <i class="fa-solid fa-house"></i>
-                    <span>Menu Principal</span>
-                </button>
-            </div>
+  <!-- Cabeçalho Principal com Ajuste de Acessibilidade -->
+  <header class="bg-slate-900 text-white shadow-md sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="w-12 h-12 bg-teal-500 rounded-full flex items-center justify-center text-2xl font-bold text-white shadow-inner">
+          <i class="fa-solid fa-heart-pulse"></i>
         </div>
-    </header>
+        <div>
+          <h1 class="font-heading text-2xl md:text-3xl font-bold tracking-wide text-teal-300">Viver Ativo & Cognitivo</h1>
+          <p class="text-xs md:text-sm text-slate-300">Plataforma Adaptada de Estimulação Plena</p>
+        </div>
+      </div>
 
-    <!-- MAIN CONTENT CONTAINER -->
-    <main class="max-w-6xl w-full mx-auto p-4 sm:p-6 flex-grow">
+      <!-- Barra de Controle de Voz e Leitura -->
+      <div class="flex items-center gap-3">
+        <button id="toggleAudioBtn" onclick="toggleAudioHelp()" class="btn-senior bg-slate-800 hover:bg-slate-700 text-teal-300 border border-teal-500/40 px-4 py-2 rounded-xl flex items-center gap-2 font-bold text-base focus-ring">
+          <i id="audioIcon" class="fa-solid fa-volume-high text-xl"></i>
+          <span id="audioStatusText">Voz: Ativada</span>
+        </button>
+      </div>
+    </div>
+  </header>
 
-        <!-- MAIN MENU -->
-        <section id="module-menu" class="space-y-6">
-            <div class="bg-blue-100 border-l-8 border-blue-600 p-6 rounded-2xl shadow-sm">
-                <h2 class="text-2xl sm:text-3xl font-extrabold text-blue-950 mb-2">Bem-vindo(a) ao Viver Ativo!</h2>
-                <p class="text-lg text-slate-800 leading-relaxed">
-                    Escolha uma atividade abaixo para praticar no seu próprio ritmo. Não há tempo limite nem pressa. Divirta-se!
-                </p>
-            </div>
+  <!-- Navegação dos Módulos Principais -->
+  <nav class="bg-slate-200 border-b border-slate-300 sticky top-[68px] z-40 shadow-sm">
+    <div class="max-w-6xl mx-auto px-2 py-2 flex items-center overflow-x-auto gap-2 no-scrollbar">
+      <button onclick="switchTab('tab-dupla')" id="btn-tab-dupla" class="tab-btn active border-b-4 border-amber-600 bg-white text-slate-900 px-4 py-3 rounded-t-xl font-bold text-lg whitespace-nowrap shadow-sm focus-ring">
+        <i class="fa-solid fa-[#D97706] fa-layer-group mr-2 text-amber-600"></i>1. Dupla Tarefa
+      </button>
+      <button onclick="switchTab('tab-retencao')" id="btn-tab-retencao" class="tab-btn border-b-4 border-transparent hover:bg-slate-100 text-slate-700 px-4 py-3 rounded-t-xl font-bold text-lg whitespace-nowrap focus-ring">
+        <i class="fa-solid fa-brain mr-2 text-purple-600"></i>2. Retenção & Memória
+      </button>
+      <button onclick="switchTab('tab-sensorial')" id="btn-tab-sensorial" class="tab-btn border-b-4 border-transparent hover:bg-slate-100 text-slate-700 px-4 py-3 rounded-t-xl font-bold text-lg whitespace-nowrap focus-ring">
+        <i class="fa-solid fa-[#0D9488] fa-eye mr-2 text-teal-600"></i>3. Percepção & Sensorial
+      </button>
+      <button onclick="switchTab('tab-psico')" id="btn-tab-psico" class="tab-btn border-b-4 border-transparent hover:bg-slate-100 text-slate-700 px-4 py-3 rounded-t-xl font-bold text-lg whitespace-nowrap focus-ring">
+        <i class="fa-solid fa-sun mr-2 text-rose-600"></i>4. Autoconfiança
+      </button>
+      <button onclick="switchTab('tab-objetos')" id="btn-tab-objetos" class="tab-btn border-b-4 border-transparent hover:bg-slate-100 text-slate-700 px-4 py-3 rounded-t-xl font-bold text-lg whitespace-nowrap focus-ring">
+        <i class="fa-solid fa-house mr-2 text-blue-600"></i>5. Objetos & Cômodos
+      </button>
+      <button onclick="switchTab('tab-cores')" id="btn-tab-cores" class="tab-btn border-b-4 border-transparent hover:bg-slate-100 text-slate-700 px-4 py-3 rounded-t-xl font-bold text-lg whitespace-nowrap focus-ring">
+        <i class="fa-solid fa-palette mr-2 text-green-600"></i>6. Cores & Formas
+      </button>
+      <button onclick="switchTab('tab-global')" id="btn-tab-global" class="tab-btn border-b-4 border-transparent hover:bg-slate-100 text-slate-700 px-4 py-3 rounded-t-xl font-bold text-lg whitespace-nowrap focus-ring">
+        <i class="fa-solid fa-[#0284C7] fa-child-reaching mr-2 text-sky-600"></i>7. Movimento Global
+      </button>
+      <button onclick="switchTab('tab-fina')" id="btn-tab-fina" class="tab-btn border-b-4 border-transparent hover:bg-slate-100 text-slate-700 px-4 py-3 rounded-t-xl font-bold text-lg whitespace-nowrap focus-ring">
+        <i class="fa-solid fa-hand-pointer mr-2 text-indigo-600"></i>8. Trilha Fina
+      </button>
+    </div>
+  </nav>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Module 1 Card -->
-                <div onclick="switchModule('ambiente')" class="bg-white hover:bg-amber-50 border-4 border-slate-200 hover:border-amber-400 rounded-3xl p-6 cursor-pointer shadow-lg hover:shadow-xl transition flex flex-col justify-between group">
-                    <div class="flex items-start space-x-5">
-                        <div class="bg-emerald-100 text-emerald-800 p-5 rounded-2xl text-4xl group-hover:scale-110 transition">
-                            <i class="fa-solid fa-house-user"></i>
-                        </div>
-                        <div>
-                            <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full">Associação</span>
-                            <h3 class="text-2xl font-bold text-slate-900 mt-2">1. Onde Guardar?</h3>
-                            <p class="text-slate-600 text-base mt-2">Ligue cada objeto ao seu ambiente correto na casa (Cozinha, Banheiro, Quarto).</p>
-                        </div>
-                    </div>
-                    <div class="mt-6 flex justify-end">
-                        <span class="bg-emerald-600 text-white font-bold py-3 px-6 rounded-2xl text-lg flex items-center gap-2 group-hover:bg-emerald-700">
-                            Iniciar <i class="fa-solid fa-arrow-right"></i>
-                        </span>
-                    </div>
-                </div>
+  <!-- Conteúdo Central dos Jogos -->
+  <main class="flex-grow max-w-5xl w-full mx-auto p-4 md:p-6">
+    
+    <!-- MÓDULO 1: DUPLA TAREFA (COGNITIVO-MOTORA) -->
+    <section id="tab-dupla" class="tab-content block space-y-6">
+      <div class="bg-amber-50 border-l-8 border-amber-600 p-6 rounded-2xl shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="font-heading text-2xl md:text-3xl font-bold text-amber-900">1. Atividade de Dupla Tarefa</h2>
+          <button onclick="speakInstruction('dupla')" class="text-amber-800 bg-amber-200 hover:bg-amber-300 p-3 rounded-xl font-bold flex items-center gap-2 focus-ring">
+            <i class="fa-solid fa-volume-high text-xl"></i> Ouvir Ordem
+          </button>
+        </div>
+        <p class="text-lg md:text-xl text-amber-950 font-medium">
+          Leia ou escute a instrução e selecione a resposta correta correspondente à cor e forma pedidas simultaneamente.
+        </p>
+      </div>
 
-                <!-- Module 2 Card -->
-                <div onclick="switchModule('cores')" class="bg-white hover:bg-amber-50 border-4 border-slate-200 hover:border-amber-400 rounded-3xl p-6 cursor-pointer shadow-lg hover:shadow-xl transition flex flex-col justify-between group">
-                    <div class="flex items-start space-x-5">
-                        <div class="bg-blue-100 text-blue-800 p-5 rounded-2xl text-4xl group-hover:scale-110 transition">
-                            <i class="fa-solid fa-palette"></i>
-                        </div>
-                        <div>
-                            <span class="text-xs font-extrabold uppercase tracking-wider text-blue-700 bg-blue-100 px-3 py-1 rounded-full">Memória Visual</span>
-                            <h3 class="text-2xl font-bold text-slate-900 mt-2">2. Jogo das Cores</h3>
-                            <p class="text-slate-600 text-base mt-2">Encontre os pares de cores iguais. Possui nomes legíveis e formas associadas.</p>
-                        </div>
-                    </div>
-                    <div class="mt-6 flex justify-end">
-                        <span class="bg-blue-600 text-white font-bold py-3 px-6 rounded-2xl text-lg flex items-center gap-2 group-hover:bg-blue-700">
-                            Iniciar <i class="fa-solid fa-arrow-right"></i>
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Module 3 Card -->
-                <div onclick="switchModule('global')" class="bg-white hover:bg-amber-50 border-4 border-slate-200 hover:border-amber-400 rounded-3xl p-6 cursor-pointer shadow-lg hover:shadow-xl transition flex flex-col justify-between group">
-                    <div class="flex items-start space-x-5">
-                        <div class="bg-orange-100 text-orange-800 p-5 rounded-2xl text-4xl group-hover:scale-110 transition">
-                            <i class="fa-solid fa-bullseye"></i>
-                        </div>
-                        <div>
-                            <span class="text-xs font-extrabold uppercase tracking-wider text-orange-700 bg-orange-100 px-3 py-1 rounded-full">Coordenação Global</span>
-                            <h3 class="text-2xl font-bold text-slate-900 mt-2">3. Movimento Aberto</h3>
-                            <p class="text-slate-600 text-base mt-2">Toque ou clique nas grandes esferas iluminadas que surgem na tela.</p>
-                        </div>
-                    </div>
-                    <div class="mt-6 flex justify-end">
-                        <span class="bg-orange-600 text-white font-bold py-3 px-6 rounded-2xl text-lg flex items-center gap-2 group-hover:bg-orange-700">
-                            Iniciar <i class="fa-solid fa-arrow-right"></i>
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Module 4 Card -->
-                <div onclick="switchModule('fina')" class="bg-white hover:bg-amber-50 border-4 border-slate-200 hover:border-amber-400 rounded-3xl p-6 cursor-pointer shadow-lg hover:shadow-xl transition flex flex-col justify-between group">
-                    <div class="flex items-start space-x-5">
-                        <div class="bg-purple-100 text-purple-800 p-5 rounded-2xl text-4xl group-hover:scale-110 transition">
-                            <i class="fa-solid fa-pen-ruler"></i>
-                        </div>
-                        <div>
-                            <span class="text-xs font-extrabold uppercase tracking-wider text-purple-700 bg-purple-100 px-3 py-1 rounded-full">Coordenação Fina</span>
-                            <h3 class="text-2xl font-bold text-slate-900 mt-2">4. Trilha Precisa</h3>
-                            <p class="text-slate-600 text-base mt-2">Guie o círculo com firmeza seguindo os caminhos desenhados na tela.</p>
-                        </div>
-                    </div>
-                    <div class="mt-6 flex justify-end">
-                        <span class="bg-purple-600 text-white font-bold py-3 px-6 rounded-2xl text-lg flex items-center gap-2 group-hover:bg-purple-700">
-                            Iniciar <i class="fa-solid fa-arrow-right"></i>
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- MODULE 1: ONDE GUARDAR? (Associação) -->
-        <section id="module-ambiente" class="hidden space-y-6">
-            <div class="bg-emerald-800 text-white p-6 rounded-3xl shadow-md flex flex-wrap items-center justify-between gap-4">
-                <div>
-                    <h2 class="text-3xl font-extrabold flex items-center gap-3">
-                        <i class="fa-solid fa-house-user text-amber-300"></i>
-                        Onde Guardar?
-                    </h2>
-                    <p class="text-emerald-100 text-lg mt-1">Clique num objeto e depois toque no cômodo correto para guardá-lo.</p>
-                </div>
-                <button onclick="speakInstruction('Clique ou toque no objeto e depois escolha em qual cômodo ele deve ser guardado.')" class="bg-emerald-700 hover:bg-emerald-600 text-amber-200 font-bold px-4 py-2 rounded-xl flex items-center gap-2 border border-emerald-500">
-                    <i class="fa-solid fa-volume-high"></i> Ouvir instrução
-                </button>
-            </div>
-
-            <!-- Current Object to Place -->
-            <div class="bg-amber-50 border-4 border-amber-300 p-6 rounded-3xl text-center space-y-4 shadow-inner">
-                <p class="text-slate-700 font-bold text-xl uppercase tracking-wide">Objeto Selecionado:</p>
-                <div id="active-item-container" class="inline-flex flex-col items-center justify-center bg-white p-6 rounded-2xl border-2 border-amber-400 shadow-md min-w-[200px]">
-                    <i id="active-item-icon" class="fa-solid fa-toothbrush text-6xl text-emerald-600 mb-2"></i>
-                    <span id="active-item-name" class="text-2xl font-extrabold text-slate-900">Escova de Dentes</span>
-                </div>
-                <p class="text-slate-600 font-medium text-lg">Em qual destes ambientes este objeto deve ficar?</p>
-            </div>
-
-            <!-- Target Rooms -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="rooms-container">
-                <!-- Banheiro -->
-                <button onclick="checkRoomChoice('banheiro')" class="room-btn bg-white hover:bg-blue-50 border-4 border-blue-400 hover:border-blue-600 rounded-3xl p-6 flex flex-col items-center justify-center space-y-4 shadow-lg active:scale-95 transition min-h-[200px]">
-                    <div class="bg-blue-100 text-blue-800 p-5 rounded-full text-4xl">
-                        <i class="fa-solid fa-bath"></i>
-                    </div>
-                    <span class="text-2xl font-black text-slate-900">BANHEIRO</span>
-                    <span class="text-xs font-bold text-blue-700 bg-blue-100 px-3 py-1 rounded-full">Guardar aqui</span>
-                </button>
-
-                <!-- Cozinha -->
-                <button onclick="checkRoomChoice('cozinha')" class="room-btn bg-white hover:bg-amber-50 border-4 border-amber-400 hover:border-amber-600 rounded-3xl p-6 flex flex-col items-center justify-center space-y-4 shadow-lg active:scale-95 transition min-h-[200px]">
-                    <div class="bg-amber-100 text-amber-800 p-5 rounded-full text-4xl">
-                        <i class="fa-solid fa-utensils"></i>
-                    </div>
-                    <span class="text-2xl font-black text-slate-900">COZINHA</span>
-                    <span class="text-xs font-bold text-amber-800 bg-amber-100 px-3 py-1 rounded-full">Guardar aqui</span>
-                </button>
-
-                <!-- Quarto -->
-                <button onclick="checkRoomChoice('quarto')" class="room-btn bg-white hover:bg-purple-50 border-4 border-purple-400 hover:border-purple-600 rounded-3xl p-6 flex flex-col items-center justify-center space-y-4 shadow-lg active:scale-95 transition min-h-[200px]">
-                    <div class="bg-purple-100 text-purple-800 p-5 rounded-full text-4xl">
-                        <i class="fa-solid fa-bed"></i>
-                    </div>
-                    <span class="text-2xl font-black text-slate-900">QUARTO</span>
-                    <span class="text-xs font-bold text-purple-700 bg-purple-100 px-3 py-1 rounded-full">Guardar aqui</span>
-                </button>
-
-                <!-- Sala -->
-                <button onclick="checkRoomChoice('sala')" class="room-btn bg-white hover:bg-rose-50 border-4 border-rose-400 hover:border-rose-600 rounded-3xl p-6 flex flex-col items-center justify-center space-y-4 shadow-lg active:scale-95 transition min-h-[200px]">
-                    <div class="bg-rose-100 text-rose-800 p-5 rounded-full text-4xl">
-                        <i class="fa-solid fa-tv"></i>
-                    </div>
-                    <span class="text-2xl font-black text-slate-900">SALA</span>
-                    <span class="text-xs font-bold text-rose-700 bg-rose-100 px-3 py-1 rounded-full">Guardar aqui</span>
-                </button>
-            </div>
-
-            <!-- Score & Progress -->
-            <div class="bg-slate-200 p-4 rounded-2xl flex items-center justify-between text-xl font-bold">
-                <span>Objetos Organizados: <span id="ambiente-score" class="text-emerald-700 font-extrabold">0</span></span>
-                <button onclick="resetAmbienteGame()" class="bg-slate-700 hover:bg-slate-800 text-white px-5 py-2 rounded-xl text-base">Novo Objeto</button>
-            </div>
-        </section>
-
-        <!-- MODULE 2: JOGO DAS CORES (Cognição de Cores) -->
-        <section id="module-cores" class="hidden space-y-6">
-            <div class="bg-blue-800 text-white p-6 rounded-3xl shadow-md flex flex-wrap items-center justify-between gap-4">
-                <div>
-                    <h2 class="text-3xl font-extrabold flex items-center gap-3">
-                        <i class="fa-solid fa-palette text-amber-300"></i>
-                        Jogo das Cores
-                    </h2>
-                    <p class="text-blue-100 text-lg mt-1">Vire as cartas e encontre os pares de cores iguais.</p>
-                </div>
-                <button onclick="speakInstruction('Vire duas cartas por vez para encontrar as cores correspondentes.')" class="bg-blue-700 hover:bg-blue-600 text-amber-200 font-bold px-4 py-2 rounded-xl flex items-center gap-2 border border-blue-500">
-                    <i class="fa-solid fa-volume-high"></i> Ouvir instrução
-                </button>
-            </div>
-
-            <!-- Memory Grid -->
-            <div id="color-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
-                <!-- Memory Cards Dynamically Rendered Here -->
-            </div>
-
-            <!-- Status and Restart -->
-            <div class="bg-slate-200 p-4 rounded-2xl flex items-center justify-between text-xl font-bold">
-                <span>Pares Encontrados: <span id="cores-score" class="text-blue-700 font-extrabold">0 / 4</span></span>
-                <button onclick="initCoresGame()" class="bg-blue-700 hover:bg-blue-800 text-white px-6 py-3 rounded-2xl text-lg shadow">
-                    <i class="fa-solid fa-rotate-right mr-2"></i> Reiniciar Jogo
-                </button>
-            </div>
-        </section>
-
-        <!-- MODULE 3: MOVIMENTO ABERTO (Coordenação Motora Global) -->
-        <section id="module-global" class="hidden space-y-6">
-            <div class="bg-orange-800 text-white p-6 rounded-3xl shadow-md flex flex-wrap items-center justify-between gap-4">
-                <div>
-                    <h2 class="text-3xl font-extrabold flex items-center gap-3">
-                        <i class="fa-solid fa-bullseye text-amber-300"></i>
-                        Movimento Aberto
-                    </h2>
-                    <p class="text-orange-100 text-lg mt-1">Toque no grande círculo colorido que surgir na área abaixo.</p>
-                </div>
-                <button onclick="speakInstruction('Toque na grande esfera colorida assim que ela aparecer na área de jogo.')" class="bg-orange-700 hover:bg-orange-600 text-amber-200 font-bold px-4 py-2 rounded-xl flex items-center gap-2 border border-orange-500">
-                    <i class="fa-solid fa-volume-high"></i> Ouvir instrução
-                </button>
-            </div>
-
-            <!-- Large Target Playground -->
-            <div id="global-playground" class="relative bg-amber-50 border-4 border-orange-300 rounded-3xl min-h-[400px] h-[60vh] flex items-center justify-center overflow-hidden shadow-inner cursor-pointer">
-                <!-- Target Circle -->
-                <button id="global-target" onclick="hitGlobalTarget(event)" class="absolute pulse-target bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 border-8 border-white rounded-full flex flex-col items-center justify-center shadow-2xl transform active:scale-95 transition-all text-white cursor-pointer" style="width: 140px; height: 140px;">
-                    <i class="fa-solid fa-hand-pointer text-4xl mb-1"></i>
-                    <span class="font-black text-xl">TOQUE!</span>
-                </button>
-            </div>
-
-            <div class="bg-slate-200 p-4 rounded-2xl flex items-center justify-between text-xl font-bold">
-                <span>Toques com Sucesso: <span id="global-score" class="text-orange-700 font-extrabold">0</span></span>
-                <span class="text-slate-600 text-base">Alvo amplo e tolerante</span>
-            </div>
-        </section>
-
-        <!-- MODULE 4: TRILHA PRECISA (Coordenação Motora Fina) -->
-        <section id="module-fina" class="hidden space-y-6">
-            <div class="bg-purple-800 text-white p-6 rounded-3xl shadow-md flex flex-wrap items-center justify-between gap-4">
-                <div>
-                    <h2 class="text-3xl font-extrabold flex items-center gap-3">
-                        <i class="fa-solid fa-pen-ruler text-amber-300"></i>
-                        Trilha Precisa
-                    </h2>
-                    <p class="text-purple-100 text-lg mt-1">Arraste a bola azul do início (ponto verde) até a chegada (ponto vermelho).</p>
-                </div>
-                <button onclick="speakInstruction('Arraste a bolinha do ponto verde inicial até o ponto vermelho final seguindo o caminho.')" class="bg-purple-700 hover:bg-purple-600 text-amber-200 font-bold px-4 py-2 rounded-xl flex items-center gap-2 border border-purple-500">
-                    <i class="fa-solid fa-volume-high"></i> Ouvir instrução
-                </button>
-            </div>
-
-            <!-- Canvas Container -->
-            <div class="bg-white border-4 border-purple-300 rounded-3xl p-4 shadow-lg flex flex-col items-center space-y-4">
-                <canvas id="fine-motor-canvas" class="w-full max-w-2xl h-[350px] bg-purple-50 rounded-2xl cursor-crosshair border-2 border-purple-200 touch-none"></canvas>
-
-                <div class="flex flex-wrap justify-center gap-4">
-                    <button onclick="setTrackType('straight')" class="bg-purple-100 hover:bg-purple-200 text-purple-900 border-2 border-purple-400 font-bold py-3 px-6 rounded-2xl text-lg">
-                        Caminho Reto
-                    </button>
-                    <button onclick="setTrackType('curved')" class="bg-purple-100 hover:bg-purple-200 text-purple-900 border-2 border-purple-400 font-bold py-3 px-6 rounded-2xl text-lg">
-                        Caminho Curvo
-                    </button>
-                    <button onclick="setTrackType('zigzag')" class="bg-purple-100 hover:bg-purple-200 text-purple-900 border-2 border-purple-400 font-bold py-3 px-6 rounded-2xl text-lg">
-                        Caminho Zig-Zag
-                    </button>
-                </div>
-            </div>
-
-            <div class="bg-slate-200 p-4 rounded-2xl flex items-center justify-between text-xl font-bold">
-                <span>Trilhas Concluídas: <span id="fina-score" class="text-purple-700 font-extrabold">0</span></span>
-                <button onclick="resetFineTrack()" class="bg-purple-700 hover:bg-purple-800 text-white px-5 py-2 rounded-xl text-base">Reiniciar Trilha</button>
-            </div>
-        </section>
-
-        <!-- FEEDBACK BANNER / TOAST -->
-        <div id="feedback-toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white px-8 py-5 rounded-3xl shadow-2xl border-4 border-amber-400 flex items-center space-x-4 opacity-0 pointer-events-none transition-all duration-300 z-50">
-            <i id="feedback-icon" class="fa-solid fa-star text-amber-400 text-4xl"></i>
-            <span id="feedback-text" class="text-2xl font-black tracking-wide">Muito Bem!</span>
+      <div class="bg-white border-2 border-amber-200 rounded-3xl p-6 md:p-8 shadow-md text-center space-y-8">
+        <div class="bg-amber-100/70 p-6 rounded-2xl border border-amber-300">
+          <span class="text-sm font-bold uppercase tracking-wider text-amber-800 block mb-1">Comando Atual:</span>
+          <p id="duplaTaskInstruction" class="text-2xl md:text-3xl font-bold text-slate-900 font-heading">
+            Carregando instrução...
+          </p>
         </div>
 
-    </main>
-
-    <!-- FOOTER -->
-    <footer class="bg-slate-800 text-slate-300 p-6 text-center text-base border-t-4 border-slate-700 mt-8">
-        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p class="font-medium text-lg">&copy; 2026 Larissa da Silva Anastácio. Todos os direitos reservados.</p>
-            <div class="flex items-center space-x-6 text-sm">
-                <span class="flex items-center gap-2"><i class="fa-solid fa-universal-access text-amber-400"></i> Alto Contraste</span>
-                <span class="flex items-center gap-2"><i class="fa-solid fa-clock text-amber-400"></i> Sem Pressa</span>
-            </div>
+        <div id="duplaGrid" class="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-2xl mx-auto">
+          <!-- Gerado via JS -->
         </div>
-    </footer>
 
-    <!-- JAVASCRIPT LOGIC -->
-    <script>
-        /* ===================================================
-           GLOBAL STATE & AUDIO SYNTHESIS
-           =================================================== */
-        let audioEnabled = true;
-        let currentModule = 'menu';
+        <div id="duplaFeedback" class="min-h-[50px] flex items-center justify-center font-bold text-xl md:text-2xl">
+          <!-- Mensagem de incentivo -->
+        </div>
+      </div>
+    </section>
 
-        function speakInstruction(text) {
-            if (!audioEnabled || !('speechSynthesis' in window)) return;
-            window.speechSynthesis.cancel(); // Stop any ongoing speech
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'pt-BR';
-            utterance.rate = 0.9; // Slightly slower for clarity
-            utterance.pitch = 1.0;
-            window.speechSynthesis.speak(utterance);
+    <!-- MÓDULO 2: RETENÇÃO E MEMÓRIA (PROCESSAMENTO LENTO) -->
+    <section id="tab-retencao" class="tab-content hidden space-y-6">
+      <div class="bg-purple-50 border-l-8 border-purple-600 p-6 rounded-2xl shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="font-heading text-2xl md:text-3xl font-bold text-purple-900">2. Retenção & Memória Sequencial</h2>
+          <button onclick="speakInstruction('retencao')" class="text-purple-800 bg-purple-200 hover:bg-purple-300 p-3 rounded-xl font-bold flex items-center gap-2 focus-ring">
+            <i class="fa-solid fa-volume-high text-xl"></i> Ouvir Instrução
+          </button>
+        </div>
+        <p class="text-lg md:text-xl text-purple-950 font-medium">
+          Memorize os elementos mostrados na sequência. Eles se esconderão e você poderá reconstruir no seu tempo.
+        </p>
+      </div>
+
+      <div class="bg-white border-2 border-purple-200 rounded-3xl p-6 md:p-8 shadow-md text-center space-y-8">
+        
+        <!-- Área de Exibição do Padrão -->
+        <div class="bg-purple-50 border-2 border-dashed border-purple-300 rounded-2xl p-6 min-h-[160px] flex flex-col items-center justify-center">
+          <span id="retencaoPhaseLabel" class="text-sm font-bold uppercase tracking-wider text-purple-800 block mb-4">
+            Observe a Sequência:
+          </span>
+          <div id="retencaoTargetDisplay" class="flex items-center justify-center gap-4 md:gap-8 flex-wrap">
+            <!-- Sequência visual gerada -->
+          </div>
+        </div>
+
+        <!-- Botão para Iniciar Teste -->
+        <div id="retencaoControlArea">
+          <button onclick="startRetencaoTest()" id="btnStartMemory" class="btn-senior bg-purple-600 hover:bg-purple-700 text-white font-bold text-xl px-8 py-4 rounded-2xl shadow-lg focus-ring">
+            <i class="fa-solid fa-eye-slash mr-2"></i> Esconder e Começar
+          </button>
+        </div>
+
+        <!-- Opções para o Idoso Selecionar -->
+        <div id="retencaoSelectionArea" class="hidden space-y-6">
+          <p class="text-xl font-bold text-slate-800">Clique nos símbolos na ordem correta:</p>
+          <div id="retencaoOptionsGrid" class="flex flex-wrap items-center justify-center gap-4">
+            <!-- Opções geradas dinamicamente -->
+          </div>
+          <div id="retencaoUserProgress" class="flex items-center justify-center gap-4 min-h-[80px] bg-slate-100 rounded-xl p-4">
+            <span class="text-slate-500 font-medium">Sua resposta aparecerá aqui...</span>
+          </div>
+        </div>
+
+        <div id="retencaoFeedback" class="min-h-[50px] font-bold text-xl md:text-2xl flex items-center justify-center">
+        </div>
+      </div>
+    </section>
+
+    <!-- MÓDULO 3: BARREIRAS SENSORIAIS & PERCEPÇÃO CORPORAL -->
+    <section id="tab-sensorial" class="tab-content hidden space-y-6">
+      <div class="bg-teal-50 border-l-8 border-teal-600 p-6 rounded-2xl shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="font-heading text-2xl md:text-3xl font-bold text-teal-900">3. Percepção Sensorial e Corporal</h2>
+          <button onclick="speakInstruction('sensorial')" class="text-teal-800 bg-teal-200 hover:bg-teal-300 p-3 rounded-xl font-bold flex items-center gap-2 focus-ring">
+            <i class="fa-solid fa-volume-high text-xl"></i> Ouvir Orientação
+          </button>
+        </div>
+        <p class="text-lg md:text-xl text-teal-950 font-medium">
+          Associe cada som ou parte do corpo à função sensorial ou ação correta com alto contraste visual.
+        </p>
+      </div>
+
+      <div class="bg-white border-2 border-teal-200 rounded-3xl p-6 md:p-8 shadow-md text-center space-y-8">
+        
+        <div class="bg-slate-900 text-white p-6 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4">
+          <div class="text-left">
+            <span class="text-xs uppercase font-bold tracking-widest text-teal-400">Desafio Perceptual</span>
+            <p id="sensorialPrompt" class="text-xl md:text-2xl font-bold mt-1">Carregando exercício sensorial...</p>
+          </div>
+          <button id="sensorialPlaySoundBtn" onclick="playSensorialSound()" class="btn-senior bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold px-6 py-3 rounded-xl flex items-center gap-2 text-lg focus-ring">
+            <i class="fa-solid fa-circle-play text-2xl"></i> Tocar Som Guia
+          </button>
+        </div>
+
+        <div id="sensorialGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Cards de seleção de percepção -->
+        </div>
+
+        <div id="sensorialFeedback" class="min-h-[50px] font-bold text-xl md:text-2xl flex items-center justify-center">
+        </div>
+      </div>
+    </section>
+
+    <!-- MÓDULO 4: FATORES PSICOLÓGICOS E CRENÇAS LIMITANTES -->
+    <section id="tab-psico" class="tab-content hidden space-y-6">
+      <div class="bg-rose-50 border-l-8 border-rose-600 p-6 rounded-2xl shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="font-heading text-2xl md:text-3xl font-bold text-rose-900">4. Mural da Autoconfiança</h2>
+          <button onclick="speakInstruction('psico')" class="text-rose-800 bg-rose-200 hover:bg-rose-300 p-3 rounded-xl font-bold flex items-center gap-2 focus-ring">
+            <i class="fa-solid fa-volume-high text-xl"></i> Ouvir Mensagem
+          </button>
+        </div>
+        <p class="text-lg md:text-xl text-rose-950 font-medium">
+          Sem pressa, sem pontuação e sem erros. Fortaleça sua mente e comemore cada pequena conquista diária.
+        </p>
+      </div>
+
+      <div class="bg-white border-2 border-rose-200 rounded-3xl p-6 md:p-8 shadow-md space-y-8">
+        
+        <!-- Card de Afirmação do Dia -->
+        <div class="bg-gradient-to-br from-rose-500 to-amber-500 text-white rounded-3xl p-8 text-center shadow-lg relative overflow-hidden">
+          <i class="fa-solid fa-quote-left text-white/20 text-6xl absolute top-4 left-4"></i>
+          <h3 class="text-sm font-bold uppercase tracking-widest text-rose-100 mb-2">Pensamento Positivo do Dia</h3>
+          <p id="affirmationText" class="text-2xl md:text-3xl font-heading font-bold relative z-10 my-4 leading-relaxed">
+            "No meu próprio tempo, eu continuo aprendendo, praticando e evoluindo todos os dias!"
+          </p>
+          <button onclick="readAffirmation()" class="btn-senior inline-flex items-center gap-2 bg-white text-rose-700 hover:bg-rose-50 font-bold px-6 py-3 rounded-full text-lg shadow-md focus-ring">
+            <i class="fa-solid fa-volume-high"></i> Ouvir em Voz Alta
+          </button>
+        </div>
+
+        <!-- Registro de Conquistas Pessoais Sem Estresse -->
+        <div class="space-y-4">
+          <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-[#16A34A] fa-circle-check text-green-600"></i> O que você realizou hoje? (Toque para marcar):
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <button onclick="toggleAchievement(this)" class="achievement-btn btn-senior p-5 border-2 border-slate-200 rounded-2xl flex items-center gap-4 text-left hover:border-rose-400 bg-slate-50 focus-ring">
+              <div class="w-10 h-10 rounded-full border-2 border-slate-400 flex items-center justify-center text-xl text-slate-400 check-icon">
+                <i class="fa-solid fa-check"></i>
+              </div>
+              <span class="text-lg font-bold text-slate-800">Dediquei um tempo para cuidar de mim</span>
+            </button>
+            <button onclick="toggleAchievement(this)" class="achievement-btn btn-senior p-5 border-2 border-slate-200 rounded-2xl flex items-center gap-4 text-left hover:border-rose-400 bg-slate-50 focus-ring">
+              <div class="w-10 h-10 rounded-full border-2 border-slate-400 flex items-center justify-center text-xl text-slate-400 check-icon">
+                <i class="fa-solid fa-check"></i>
+              </div>
+              <span class="text-lg font-bold text-slate-800">Realizei exercícios leves no meu ritmo</span>
+            </button>
+            <button onclick="toggleAchievement(this)" class="achievement-btn btn-senior p-5 border-2 border-slate-200 rounded-2xl flex items-center gap-4 text-left hover:border-rose-400 bg-slate-50 focus-ring">
+              <div class="w-10 h-10 rounded-full border-2 border-slate-400 flex items-center justify-center text-xl text-slate-400 check-icon">
+                <i class="fa-solid fa-check"></i>
+              </div>
+              <span class="text-lg font-bold text-slate-800">Experimentei um novo jogo cognitivo</span>
+            </button>
+            <button onclick="toggleAchievement(this)" class="achievement-btn btn-senior p-5 border-2 border-slate-200 rounded-2xl flex items-center gap-4 text-left hover:border-rose-400 bg-slate-50 focus-ring">
+              <div class="w-10 h-10 rounded-full border-2 border-slate-400 flex items-center justify-center text-xl text-slate-400 check-icon">
+                <i class="fa-solid fa-check"></i>
+              </div>
+              <span class="text-lg font-bold text-slate-800">Mantive a paciência com meu aprendizado</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- MÓDULO 5: ASSOCIAÇÃO DE OBJETOS A AMBIENTES -->
+    <section id="tab-objetos" class="tab-content hidden space-y-6">
+      <div class="bg-blue-50 border-l-8 border-blue-600 p-6 rounded-2xl shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="font-heading text-2xl md:text-3xl font-bold text-blue-900">5. Onde Guardar este Objeto?</h2>
+          <button onclick="speakInstruction('objetos')" class="text-blue-800 bg-blue-200 hover:bg-blue-300 p-3 rounded-xl font-bold flex items-center gap-2 focus-ring">
+            <i class="fa-solid fa-volume-high text-xl"></i> Ouvir instrução
+          </button>
+        </div>
+        <p class="text-lg md:text-xl text-blue-950 font-medium">
+          Examine o objeto em destaque e selecione o cômodo da casa onde ele costuma ser guardado.
+        </p>
+      </div>
+
+      <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 md:p-8 shadow-md text-center space-y-8">
+        <div id="objectCard" class="bg-slate-100 border-2 border-slate-300 rounded-3xl p-6 max-w-sm mx-auto shadow-inner">
+          <div id="objectIcon" class="text-7xl md:text-8xl text-slate-800 mb-3">
+            <i class="fa-solid fa-soap"></i>
+          </div>
+          <h3 id="objectName" class="font-heading text-3xl font-bold text-slate-900">Sabonete</h3>
+        </div>
+
+        <div class="space-y-4">
+          <p class="text-xl font-bold text-slate-700">Escolha o cômodo correto:</p>
+          <div id="roomOptions" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <!-- Botões dos Cômodos gerados por JS -->
+          </div>
+        </div>
+
+        <div id="objetosFeedback" class="min-h-[50px] font-bold text-xl md:text-2xl flex items-center justify-center"></div>
+      </div>
+    </section>
+
+    <!-- MÓDULO 6: COGNITIVO DAS CORES E FORMAS -->
+    <section id="tab-cores" class="tab-content hidden space-y-6">
+      <div class="bg-green-50 border-l-8 border-green-600 p-6 rounded-2xl shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="font-heading text-2xl md:text-3xl font-bold text-green-900">6. Jogo das Cores e Formas</h2>
+          <button onclick="speakInstruction('cores')" class="text-green-800 bg-green-200 hover:bg-green-300 p-3 rounded-xl font-bold flex items-center gap-2 focus-ring">
+            <i class="fa-solid fa-volume-high text-xl"></i> Ouvir instrução
+          </button>
+        </div>
+        <p class="text-lg md:text-xl text-green-950 font-medium">
+          Encontre os pares iguais. Cada carta combina **Cor, Forma e Nome Por Extenso** para facilitar a leitura.
+        </p>
+      </div>
+
+      <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 md:p-8 shadow-md space-y-6">
+        <div id="colorMemoryBoard" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          <!-- Cartas da Memória geradas dinamicamente -->
+        </div>
+        <div id="coresFeedback" class="min-h-[50px] text-center font-bold text-xl md:text-2xl"></div>
+      </div>
+    </section>
+
+    <!-- MÓDULO 7: COORDENAÇÃO MOTORA GLOBAL -->
+    <section id="tab-global" class="tab-content hidden space-y-6">
+      <div class="bg-sky-50 border-l-8 border-sky-600 p-6 rounded-2xl shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="font-heading text-2xl md:text-3xl font-bold text-sky-900">7. Movimento Amplo (Motora Global)</h2>
+          <button onclick="speakInstruction('global')" class="text-sky-800 bg-sky-200 hover:bg-sky-300 p-3 rounded-xl font-bold flex items-center gap-2 focus-ring">
+            <i class="fa-solid fa-volume-high text-xl"></i> Ouvir instrução
+          </button>
+        </div>
+        <p class="text-lg md:text-xl text-sky-950 font-medium">
+          Toque no círculo grande quando ele aparecer na tela. Exercite o movimento do braço e ombro.
+        </p>
+      </div>
+
+      <div class="bg-white border-2 border-slate-200 rounded-3xl p-4 shadow-md text-center">
+        <div id="globalPlayArea" class="relative w-full h-[380px] bg-slate-100 rounded-2xl border-2 border-dashed border-slate-300 overflow-hidden flex items-center justify-center">
+          <button id="globalTargetBtn" onclick="hitGlobalTarget()" class="btn-senior absolute w-32 h-32 md:w-36 md:h-36 bg-sky-500 hover:bg-sky-600 text-white rounded-full flex flex-col items-center justify-center shadow-xl border-4 border-white focus-ring">
+            <i class="fa-solid fa-hand-pointer text-4xl mb-1"></i>
+            <span class="font-bold text-lg">TOQUE AQUI</span>
+          </button>
+        </div>
+        <div id="globalFeedback" class="mt-4 min-h-[40px] font-bold text-xl text-sky-700">
+          Toque no botão azul para mover!
+        </div>
+      </div>
+    </section>
+
+    <!-- MÓDULO 8: COORDENAÇÃO MOTORA FINA -->
+    <section id="tab-fina" class="tab-content hidden space-y-6">
+      <div class="bg-indigo-50 border-l-8 border-indigo-600 p-6 rounded-2xl shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="font-heading text-2xl md:text-3xl font-bold text-indigo-900">8. Trilha Precisa (Motora Fina)</h2>
+          <button onclick="speakInstruction('fina')" class="text-indigo-800 bg-indigo-200 hover:bg-indigo-300 p-3 rounded-xl font-bold flex items-center gap-2 focus-ring">
+            <i class="fa-solid fa-volume-high text-xl"></i> Ouvir instrução
+          </button>
+        </div>
+        <p class="text-lg md:text-xl text-indigo-950 font-medium">
+          Guie o círculo verde do início (A) até o final (B) mantendo-se dentro do caminho marcado.
+        </p>
+      </div>
+
+      <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 shadow-md text-center space-y-4">
+        <div class="flex justify-center gap-3">
+          <button onclick="setFinePath('straight')" class="btn-senior bg-slate-200 hover:bg-slate-300 font-bold px-4 py-2 rounded-xl focus-ring">Linha Reta</button>
+          <button onclick="setFinePath('curve')" class="btn-senior bg-slate-200 hover:bg-slate-300 font-bold px-4 py-2 rounded-xl focus-ring">Curva Suave</button>
+          <button onclick="setFinePath('zigzag')" class="btn-senior bg-slate-200 hover:bg-slate-300 font-bold px-4 py-2 rounded-xl focus-ring">Ziguezague</button>
+        </div>
+
+        <div class="relative inline-block w-full max-w-2xl bg-slate-100 rounded-2xl border-2 border-slate-300 p-2 overflow-hidden">
+          <canvas id="fineCanvas" width="600" height="300" class="w-full h-auto touch-none cursor-crosshair rounded-xl bg-white"></canvas>
+        </div>
+
+        <div id="finaFeedback" class="min-h-[40px] font-bold text-xl text-indigo-700">
+          Mova o cursor ou o dedo do Ponto A até o Ponto B.
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Rodapé com Créditos de Direitos Autorais -->
+  <footer class="bg-slate-900 text-white mt-12 py-8 border-t-4 border-teal-500">
+    <div class="max-w-6xl mx-auto px-4 text-center space-y-3">
+      <p class="text-lg md:text-xl font-bold tracking-wide text-slate-200">
+        © 2026 Larissa da Silva Anastácio. Todos os direitos reservados.
+      </p>
+      <p class="text-sm text-slate-400">
+        Desenvolvido com foco na Acessibilidade, Inclusão Cognitiva e Motora para Terceira Idade.
+      </p>
+    </div>
+  </footer>
+
+  <!-- SCRIPT DE LÓGICA E INTERATIVIDADE -->
+  <script>
+    // Configurações Globais
+    let audioEnabled = true;
+    const synth = window.speechSynthesis;
+
+    function speakText(text) {
+      if (!audioEnabled || !synth) return;
+      synth.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'pt-BR';
+      utterance.rate = 0.85;
+      utterance.pitch = 1.0;
+      synth.speak(utterance);
+    }
+
+    function toggleAudioHelp() {
+      audioEnabled = !audioEnabled;
+      const icon = document.getElementById('audioIcon');
+      const text = document.getElementById('audioStatusText');
+      if (audioEnabled) {
+        icon.className = 'fa-solid fa-volume-high text-xl';
+        text.innerText = 'Voz: Ativada';
+        speakText('Voz ativada com sucesso.');
+      } else {
+        icon.className = 'fa-solid fa-volume-xmark text-xl text-slate-400';
+        text.innerText = 'Voz: Desativada';
+        if (synth) synth.cancel();
+      }
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active', 'border-amber-600', 'bg-white', 'text-slate-900');
+        btn.classList.add('border-transparent', 'text-slate-700');
+      });
+
+      const activeContent = document.getElementById(tabId);
+      if (activeContent) activeContent.classList.remove('hidden');
+
+      const activeBtn = document.getElementById('btn-' + tabId);
+      if (activeBtn) {
+        activeBtn.classList.add('active', 'border-amber-600', 'bg-white', 'text-slate-900');
+        activeBtn.classList.remove('border-transparent', 'text-slate-700');
+      }
+
+      if (tabId === 'tab-dupla') initDuplaTask();
+      if (tabId === 'tab-retencao') initRetencaoTask();
+      if (tabId === 'tab-sensorial') initSensorialTask();
+      if (tabId === 'tab-objetos') loadObjectQuestion();
+      if (tabId === 'tab-cores') initColorMemory();
+      if (tabId === 'tab-global') resetGlobalTarget();
+      if (tabId === 'tab-fina') setTimeout(initFineCanvas, 100);
+    }
+
+    function speakInstruction(type) {
+      const instructions = {
+        dupla: 'Atividade de dupla tarefa. Preste atenção à ordem de forma e cor pedidas simultaneamente.',
+        retencao: 'Retenção e memória. Observe os símbolos, memorize a sequência e repita sem pressa.',
+        sensorial: 'Percepção sensorial. Associe o som ou a imagem à função corporal correspondente.',
+        psico: 'Mural da autoconfiança. Leia a mensagem do dia e registre suas vitórias diárias no seu tempo.',
+        objetos: 'Onde guardar este objeto. Escolha em qual cômodo da casa o objeto deve ser guardado.',
+        cores: 'Jogo das cores e formas. Encontre as cartas iguais combinando cores, figuras e nomes.',
+        global: 'Movimento amplo. Toque no botão azul grande cada vez que ele mudar de posição na tela.',
+        fina: 'Trilha precisa. Guie o ponto verde da letra A até a letra B por dentro do caminho.'
+      };
+      speakText(instructions[type] || '');
+    }
+
+    // 1. DUPLA TAREFA
+    const duplaShapes = [
+      { name: 'Quadrado', icon: 'fa-square' },
+      { name: 'Círculo', icon: 'fa-circle' },
+      { name: 'Estrela', icon: 'fa-star' }
+    ];
+    const duplaColors = [
+      { name: 'Amarelo', class: 'bg-amber-400 text-slate-900 border-amber-500' },
+      { name: 'Azul', class: 'bg-blue-600 text-white border-blue-700' },
+      { name: 'Vermelho', class: 'bg-rose-600 text-white border-rose-700' }
+    ];
+    let currentDuplaTarget = null;
+
+    function initDuplaTask() {
+      const randomShape = duplaShapes[Math.floor(Math.random() * duplaShapes.length)];
+      const randomColor = duplaColors[Math.floor(Math.random() * duplaColors.length)];
+      currentDuplaTarget = { shape: randomShape, color: randomColor };
+
+      const inst = `Clique no ${randomShape.name} ${randomColor.name}`;
+      document.getElementById('duplaTaskInstruction').innerText = inst;
+      speakText(inst);
+
+      const grid = document.getElementById('duplaGrid');
+      grid.innerHTML = '';
+      document.getElementById('duplaFeedback').innerHTML = '';
+
+      let options = [];
+      options.push(currentDuplaTarget);
+
+      while (options.length < 6) {
+        const s = duplaShapes[Math.floor(Math.random() * duplaShapes.length)];
+        const c = duplaColors[Math.floor(Math.random() * duplaColors.length)];
+        if (!options.some(o => o.shape.name === s.name && o.color.name === c.name)) {
+          options.push({ shape: s, color: c });
         }
-
-        function playChime(success = true) {
-            if (!audioEnabled) return;
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-
-                osc.type = 'sine';
-                if (success) {
-                    osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
-                    osc.frequency.exponentialRampToValueAtTime(659.25, ctx.currentTime + 0.15); // E5
-                    osc.frequency.exponentialRampToValueAtTime(783.99, ctx.currentTime + 0.3); // G5
-                } else {
-                    osc.frequency.setValueAtTime(220, ctx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(180, ctx.currentTime + 0.2);
-                }
-
-                gain.gain.setValueAtTime(0.3, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
-
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.4);
-            } catch (e) {
-                // AudioContext fallback
-            }
-        }
-
-        function toggleAudio() {
-            audioEnabled = !audioEnabled;
-            const statusText = document.getElementById('audio-status-text');
-            const icon = document.getElementById('audio-icon');
-
-            if (audioEnabled) {
-                statusText.textContent = 'Voz: Ligada';
-                icon.className = 'fa-solid fa-volume-high text-amber-300';
-                speakInstruction('Voz ativada.');
-            } else {
-                statusText.textContent = 'Voz: Desligada';
-                icon.className = 'fa-solid fa-volume-xmark text-slate-400';
-                window.speechSynthesis.cancel();
-            }
-        }
-
-        function showFeedback(message, isSuccess = true) {
-            const toast = document.getElementById('feedback-toast');
-            const toastText = document.getElementById('feedback-text');
-            const toastIcon = document.getElementById('feedback-icon');
-
-            toastText.textContent = message;
-
-            if (isSuccess) {
-                toastIcon.className = 'fa-solid fa-circle-check text-emerald-400 text-4xl';
-                toast.className = toast.className.replace(/border-[a-z]+-\d+/, 'border-emerald-400');
-                playChime(true);
-                if (typeof confetti === 'function') {
-                    confetti({ particleCount: 40, spread: 60, origin: { y: 0.8 } });
-                }
-            } else {
-                toastIcon.className = 'fa-solid fa-circle-info text-amber-400 text-4xl';
-                toast.className = toast.className.replace(/border-[a-z]+-\d+/, 'border-amber-400');
-                playChime(false);
-            }
-
-            speakInstruction(message);
-
-            toast.classList.remove('opacity-0', 'pointer-events-none');
-            toast.classList.add('opacity-100');
-
-            setTimeout(() => {
-                toast.classList.remove('opacity-100');
-                toast.classList.add('opacity-0', 'pointer-events-none');
-            }, 2500);
-        }
-
-        function switchModule(moduleId) {
-            currentModule = moduleId;
-
-            // Hide all modules
-            document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
-
-            // Show target module
-            const target = document.getElementById(`module-${moduleId}`);
-            if (target) target.classList.remove('hidden');
-
-            const btnHome = document.getElementById('btn-home');
-            if (moduleId === 'menu') {
-                btnHome.classList.add('hidden');
-                speakInstruction('Menu principal. Escolha uma atividade.');
-            } else {
-                btnHome.classList.remove('hidden');
-            }
-
-            // Init module specific logic
-            if (moduleId === 'ambiente') initAmbienteGame();
-            if (moduleId === 'cores') initCoresGame();
-            if (moduleId === 'global') initGlobalGame();
-            if (moduleId === 'fina') initFineMotorGame();
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        /* ===================================================
-           MODULE 1: ONDE GUARDAR? (Associação)
-           =================================================== */
-        const ambienteItems = [
-            { name: 'Escova de Dentes', room: 'banheiro', icon: 'fa-toothbrush', color: 'text-blue-600' },
-            { name: 'Frigideira', room: 'cozinha', icon: 'fa-kitchen-set', color: 'text-amber-700' },
-            { name: 'Travesseiro', room: 'quarto', icon: 'fa-mattress-pillow', color: 'text-purple-600' },
-            { name: 'Controle Remoto da TV', room: 'sala', icon: 'fa-tv', color: 'text-rose-600' },
-            { name: 'Sabonete', room: 'banheiro', icon: 'fa-soap', color: 'text-teal-600' },
-            { name: 'Prato e Talheres', room: 'cozinha', icon: 'fa-utensils', color: 'text-orange-600' },
-            { name: 'Abajur', room: 'quarto', icon: 'fa-lightbulb', color: 'text-yellow-600' },
-            { name: 'Almofada do Sofá', room: 'sala', icon: 'fa-couch', color: 'text-red-600' }
-        ];
-
-        let currentAmbienteIndex = 0;
-        let ambienteScoreCount = 0;
-
-        function initAmbienteGame() {
-            currentAmbienteIndex = Math.floor(Math.random() * ambienteItems.length);
-            updateAmbienteUI();
-        }
-
-        function updateAmbienteUI() {
-            const item = ambienteItems[currentAmbienteIndex];
-            const nameEl = document.getElementById('active-item-name');
-            const iconEl = document.getElementById('active-item-icon');
-
-            nameEl.textContent = item.name;
-            iconEl.className = `fa-solid ${item.icon} text-6xl ${item.color} mb-2`;
-
-            speakInstruction(`Onde devemos guardar: ${item.name}?`);
-        }
-
-        function checkRoomChoice(roomName) {
-            const currentItem = ambienteItems[currentAmbienteIndex];
-            if (roomName === currentItem.room) {
-                ambienteScoreCount++;
-                document.getElementById('ambiente-score').textContent = ambienteScoreCount;
-                showFeedback(`Correto! O objeto ${currentItem.name} fica no ${roomName}!`, true);
-                setTimeout(nextAmbienteItem, 2000);
-            } else {
-                showFeedback(`Tente novamente. Pense bem em qual cômodo usamos este objeto.`, false);
-            }
-        }
-
-        function nextAmbienteItem() {
-            currentAmbienteIndex = (currentAmbienteIndex + 1) % ambienteItems.length;
-            updateAmbienteUI();
-        }
-
-        function resetAmbienteGame() {
-            ambienteScoreCount = 0;
-            document.getElementById('ambiente-score').textContent = '0';
-            initAmbienteGame();
-        }
-
-        /* ===================================================
-           MODULE 2: JOGO DAS CORES (Cognição de Cores)
-           =================================================== */
-        const colorPalette = [
-            { id: 'vermelho', name: 'Vermelho', bg: 'bg-red-600', text: 'text-red-700', shape: 'fa-square' },
-            { id: 'azul', name: 'Azul', bg: 'bg-blue-600', text: 'text-blue-700', shape: 'fa-circle' },
-            { id: 'amarelo', name: 'Amarelo', bg: 'bg-yellow-400', text: 'text-yellow-700', shape: 'fa-triangle-exclamation' },
-            { id: 'verde', name: 'Verde', bg: 'bg-emerald-600', text: 'text-emerald-700', shape: 'fa-star' }
-        ];
-
-        let cardsArray = [];
-        let flippedCards = [];
-        let matchedPairs = 0;
-        let isProcessing = false;
-
-        function initCoresGame() {
-            matchedPairs = 0;
-            flippedCards = [];
-            isProcessing = false;
-            document.getElementById('cores-score').textContent = `0 / ${colorPalette.length}`;
-
-            // Duplicate array for matching pairs
-            cardsArray = [...colorPalette, ...colorPalette]
-                .map((item, index) => ({ ...item, uniqueId: index }))
-                .sort(() => Math.random() - 0.5);
-
-            const grid = document.getElementById('color-grid');
-            grid.innerHTML = '';
-
-            cardsArray.forEach((card, idx) => {
-                const cardEl = document.createElement('div');
-                cardEl.className = 'card cursor-pointer h-40 sm:h-48 perspective';
-                cardEl.setAttribute('role', 'button');
-                cardEl.setAttribute('aria-label', `Carta ${idx + 1}`);
-                cardEl.onclick = () => flipCard(cardEl, card);
-
-                cardEl.innerHTML = `
-                    <div class="card-inner relative w-full h-full rounded-3xl shadow-lg border-4 border-slate-300 bg-white">
-                        <!-- FRONT (HIDDEN) -->
-                        <div class="card-front absolute inset-0 flex flex-col items-center justify-center bg-blue-900 rounded-2xl text-amber-300">
-                            <i class="fa-solid fa-question text-5xl"></i>
-                            <span class="text-sm font-bold mt-2 text-white">Toque aqui</span>
-                        </div>
-                        <!-- BACK (REVEALED) -->
-                        <div class="card-back absolute inset-0 flex flex-col items-center justify-center rounded-2xl ${card.bg} text-white p-2">
-                            <i class="fa-solid ${card.shape} text-5xl mb-2 filter drop-shadow"></i>
-                            <span class="text-2xl font-black bg-white/90 text-slate-900 px-3 py-1 rounded-xl shadow">${card.name}</span>
-                        </div>
-                    </div>
-                `;
-                grid.appendChild(cardEl);
-            });
-
-            speakInstruction('Jogo das Cores iniciado. Vire as cartas para achar os pares.');
-        }
-
-        function flipCard(cardEl, cardObj) {
-            if (isProcessing || cardEl.classList.contains('flipped') || flippedCards.length >= 2) return;
-
-            cardEl.classList.add('flipped');
-            flippedCards.push({ element: cardEl, data: cardObj });
-
-            speakInstruction(cardObj.name);
-
-            if (flippedCards.length === 2) {
-                checkColorMatch();
-            }
-        }
-
-        function checkColorMatch() {
-            isProcessing = true;
-            const [card1, card2] = flippedCards;
-
-            if (card1.data.id === card2.data.id) {
-                matchedPairs++;
-                document.getElementById('cores-score').textContent = `${matchedPairs} / ${colorPalette.length}`;
-                showFeedback(`Par de ${card1.data.name} encontrado!`, true);
-                flippedCards = [];
-                isProcessing = false;
-
-                if (matchedPairs === colorPalette.length) {
-                    setTimeout(() => {
-                        showFeedback('Parabéns! Você encontrou todas as cores!', true);
-                    }, 800);
-                }
-            } else {
-                setTimeout(() => {
-                    card1.element.classList.remove('flipped');
-                    card2.element.classList.remove('flipped');
-                    flippedCards = [];
-                    isProcessing = false;
-                }, 1400);
-            }
-        }
-
-        /* ===================================================
-           MODULE 3: MOVIMENTO ABERTO (Coordenação Global)
-           =================================================== */
-        let globalScoreCount = 0;
-
-        function initGlobalGame() {
-            globalScoreCount = 0;
-            document.getElementById('global-score').textContent = '0';
-            moveTargetToRandomPosition();
-            speakInstruction('Movimento Aberto. Toque na grande esfera que surgir.');
-        }
-
-        function moveTargetToRandomPosition() {
-            const container = document.getElementById('global-playground');
-            const target = document.getElementById('global-target');
-
-            const cRect = container.getBoundingClientRect();
-            const targetSize = 140; // width & height of target
-
-            const maxX = Math.max(0, cRect.width - targetSize - 40);
-            const maxY = Math.max(0, cRect.height - targetSize - 40);
-
-            const randomX = 20 + Math.floor(Math.random() * maxX);
-            const randomY = 20 + Math.floor(Math.random() * maxY);
-
-            target.style.left = `${randomX}px`;
-            target.style.top = `${randomY}px`;
-        }
-
-        function hitGlobalTarget(event) {
-            event.stopPropagation();
-            globalScoreCount++;
-            document.getElementById('global-score').textContent = globalScoreCount;
-            showFeedback('Excelente toque!', true);
-            moveTargetToRandomPosition();
-        }
-
-        /* ===================================================
-           MODULE 4: TRILHA PRECISA (Coordenação Fina)
-           =================================================== */
-        let canvas, ctx;
-        let isDraggingTrack = false;
-        let fineScoreCount = 0;
-        let trackType = 'straight'; // 'straight', 'curved', 'zigzag'
-
-        let startPoint = { x: 80, y: 175 };
-        let endPoint = { x: 520, y: 175 };
-        let handlePos = { x: 80, y: 175 };
-
-        function initFineMotorGame() {
-            canvas = document.getElementById('fine-motor-canvas');
-            ctx = canvas.getContext('2d');
-
-            // Set canvas dynamic resolution
-            const rect = canvas.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
-
-            resetFineTrack();
-
-            // Event Listeners for Touch and Mouse
-            canvas.onmousedown = startDrag;
-            canvas.onmousemove = doDrag;
-            canvas.onmouseup = stopDrag;
-
-            canvas.ontouchstart = (e) => { startDrag(e.touches[0]); };
-            canvas.ontouchmove = (e) => { doDrag(e.touches[0]); e.preventDefault(); };
-            canvas.ontouchend = stopDrag;
-
-            speakInstruction('Trilha Precisa. Guie a bolinha azul até a chegada.');
-        }
-
-        function setTrackType(type) {
-            trackType = type;
-            resetFineTrack();
-        }
-
-        function resetFineTrack() {
-            const w = canvas.width;
-            const h = canvas.height;
-
-            startPoint = { x: 70, y: h / 2 };
-            endPoint = { x: w - 70, y: h / 2 };
-            handlePos = { ...startPoint };
-
-            drawFineTrack();
-        }
-
-        function drawFineTrack() {
-            if (!ctx) return;
-            const w = canvas.width;
-            const h = canvas.height;
-
-            ctx.clearRect(0, 0, w, h);
-
-            // Draw Background Track Line (Thick & Clear)
-            ctx.beginPath();
-            ctx.lineWidth = 44;
-            ctx.strokeStyle = '#E9D5FF'; // Soft Purple
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-
-            if (trackType === 'straight') {
-                ctx.moveTo(startPoint.x, startPoint.y);
-                ctx.lineTo(endPoint.x, endPoint.y);
-            } else if (trackType === 'curved') {
-                ctx.moveTo(startPoint.x, startPoint.y);
-                ctx.quadraticCurveTo(w / 2, h / 4, endPoint.x, endPoint.y);
-            } else if (trackType === 'zigzag') {
-                ctx.moveTo(startPoint.x, startPoint.y);
-                ctx.lineTo(w * 0.35, h * 0.25);
-                ctx.lineTo(w * 0.65, h * 0.75);
-                ctx.lineTo(endPoint.x, endPoint.y);
-            }
-            ctx.stroke();
-
-            // Draw Center Guideline
-            ctx.beginPath();
-            ctx.lineWidth = 6;
-            ctx.strokeStyle = '#9333EA';
-            if (trackType === 'straight') {
-                ctx.moveTo(startPoint.x, startPoint.y);
-                ctx.lineTo(endPoint.x, endPoint.y);
-            } else if (trackType === 'curved') {
-                ctx.moveTo(startPoint.x, startPoint.y);
-                ctx.quadraticCurveTo(w / 2, h / 4, endPoint.x, endPoint.y);
-            } else if (trackType === 'zigzag') {
-                ctx.moveTo(startPoint.x, startPoint.y);
-                ctx.lineTo(w * 0.35, h * 0.25);
-                ctx.lineTo(w * 0.65, h * 0.75);
-                ctx.lineTo(endPoint.x, endPoint.y);
-            }
-            ctx.stroke();
-
-            // Start Target (Green Circle)
-            ctx.beginPath();
-            ctx.arc(startPoint.x, startPoint.y, 28, 0, Math.PI * 2);
-            ctx.fillStyle = '#16A34A';
-            ctx.fill();
-            ctx.lineWidth = 4;
-            ctx.strokeStyle = '#FFFFFF';
-            ctx.stroke();
-            ctx.fillStyle = '#FFFFFF';
-            ctx.font = 'bold 14px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('INÍCIO', startPoint.x, startPoint.y + 5);
-
-            // End Target (Red Circle)
-            ctx.beginPath();
-            ctx.arc(endPoint.x, endPoint.y, 28, 0, Math.PI * 2);
-            ctx.fillStyle = '#DC2626';
-            ctx.fill();
-            ctx.lineWidth = 4;
-            ctx.strokeStyle = '#FFFFFF';
-            ctx.stroke();
-            ctx.fillStyle = '#FFFFFF';
-            ctx.fillText('FIM', endPoint.x, endPoint.y + 5);
-
-            // User Draggable Handle (Blue Glowing Circle)
-            ctx.beginPath();
-            ctx.arc(handlePos.x, handlePos.y, 24, 0, Math.PI * 2);
-            ctx.fillStyle = '#2563EB';
-            ctx.fill();
-            ctx.lineWidth = 5;
-            ctx.strokeStyle = '#F59E0B';
-            ctx.stroke();
-        }
-
-        function getCanvasCoords(e) {
-            const rect = canvas.getBoundingClientRect();
-            return {
-                x: e.clientX - rect.left,
-                y: e.clientY - rect.top
-            };
-        }
-
-        function startDrag(e) {
-            const pos = getCanvasCoords(e);
-            const dist = Math.hypot(pos.x - handlePos.x, pos.y - handlePos.y);
-            if (dist < 40) { // Large touch tolerance
-                isDraggingTrack = true;
-            }
-        }
-
-        function doDrag(e) {
-            if (!isDraggingTrack) return;
-            const pos = getCanvasCoords(e);
-
-            handlePos.x = pos.x;
-            handlePos.y = pos.y;
-            drawFineTrack();
-
-            // Check arrival at endpoint with generous radius
-            const distToEnd = Math.hypot(handlePos.x - endPoint.x, handlePos.y - endPoint.y);
-            if (distToEnd < 35) {
-                isDraggingTrack = false;
-                fineScoreCount++;
-                document.getElementById('fina-score').textContent = fineScoreCount;
-                showFeedback('Parabéns! Trilha percorrida com sucesso!', true);
-                setTimeout(resetFineTrack, 1500);
-            }
-        }
-
-        function stopDrag() {
-            isDraggingTrack = false;
-        }
-
-        // Initialize default view on page load
-        window.onload = function() {
-            switchModule('menu');
+      }
+      options.sort(() => Math.random() - 0.5);
+
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = `btn-senior ${opt.color.class} border-4 p-6 rounded-2xl flex flex-col items-center justify-center gap-2 text-4xl shadow-md focus-ring`;
+        btn.innerHTML = `<i class="fa-solid ${opt.shape.icon}"></i><span class="text-sm font-bold tracking-wide">${opt.shape.name} ${opt.color.name}</span>`;
+        btn.onclick = () => checkDuplaAnswer(opt);
+        grid.appendChild(btn);
+      });
+    }
+
+    function checkDuplaAnswer(selected) {
+      const fb = document.getElementById('duplaFeedback');
+      if (selected.shape.name === currentDuplaTarget.shape.name && selected.color.name === currentDuplaTarget.color.name) {
+        fb.className = 'text-green-600 font-bold text-2xl animate-bounce';
+        fb.innerText = 'Excelente! Você acertou a combinação perfeita!';
+        speakText('Excelente! Você acertou!');
+        confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+        setTimeout(initDuplaTask, 2000);
+      } else {
+        fb.className = 'text-amber-700 font-bold text-xl';
+        fb.innerText = 'Quase lá! Tente identificar novamente o formato e a cor correta.';
+        speakText('Muito bem pela tentativa! Vamos procurar com calma.');
+      }
+    }
+
+    // 2. RETENÇÃO E MEMÓRIA
+    const memoryItems = [
+      { name: 'Maçã', icon: 'fa-apple-whole', color: 'text-rose-500' },
+      { name: 'Chave', icon: 'fa-key', color: 'text-amber-500' },
+      { name: 'Estrela', icon: 'fa-star', color: 'text-yellow-500' },
+      { name: 'Carro', icon: 'fa-car', color: 'text-blue-500' },
+      { name: 'Flor', icon: 'fa-flower-tulip', color: 'text-pink-500' }
+    ];
+    let currentRetencaoSequence = [];
+    let userRetencaoSequence = [];
+
+    function initRetencaoTask() {
+      currentRetencaoSequence = [];
+      userRetencaoSequence = [];
+      document.getElementById('retencaoControlArea').classList.remove('hidden');
+      document.getElementById('retencaoSelectionArea').classList.add('hidden');
+      document.getElementById('retencaoFeedback').innerText = '';
+
+      const targetDisplay = document.getElementById('retencaoTargetDisplay');
+      targetDisplay.innerHTML = '';
+
+      const shuffled = [...memoryItems].sort(() => Math.random() - 0.5);
+      currentRetencaoSequence = shuffled.slice(0, 3);
+
+      currentRetencaoSequence.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'flex flex-col items-center bg-white p-4 rounded-xl border-2 border-purple-200 shadow-sm w-24';
+        div.innerHTML = `<i class="fa-solid ${item.icon} text-4xl ${item.color}"></i><span class="font-bold text-slate-800 mt-2">${item.name}</span>`;
+        targetDisplay.appendChild(div);
+      });
+
+      speakText('Observe os três objetos na tela.');
+    }
+
+    function startRetencaoTest() {
+      document.getElementById('retencaoControlArea').classList.add('hidden');
+      document.getElementById('retencaoTargetDisplay').innerHTML = `
+        <div class="text-purple-800 font-bold text-2xl flex items-center gap-3">
+          <i class="fa-solid fa-lock text-3xl"></i> Sequência Ocultada! Reconstrua abaixo:
+        </div>
+      `;
+      document.getElementById('retencaoSelectionArea').classList.remove('hidden');
+
+      const optionsGrid = document.getElementById('retencaoOptionsGrid');
+      optionsGrid.innerHTML = '';
+      document.getElementById('retencaoUserProgress').innerHTML = '';
+
+      memoryItems.forEach(item => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-senior bg-white hover:bg-purple-50 border-2 border-purple-300 p-4 rounded-2xl flex flex-col items-center justify-center w-28 shadow-sm focus-ring';
+        btn.innerHTML = `<i class="fa-solid ${item.icon} text-3xl ${item.color}"></i><span class="font-bold text-slate-800 text-sm mt-1">${item.name}</span>`;
+        btn.onclick = () => selectRetencaoItem(item);
+        optionsGrid.appendChild(btn);
+      });
+
+      speakText('Selecione os símbolos na ordem em que apareceram.');
+    }
+
+    function selectRetencaoItem(item) {
+      if (userRetencaoSequence.length >= 3) return;
+      userRetencaoSequence.push(item);
+
+      const progressArea = document.getElementById('retencaoUserProgress');
+      if (userRetencaoSequence.length === 1) progressArea.innerHTML = '';
+
+      const div = document.createElement('div');
+      div.className = 'flex flex-col items-center bg-white p-3 rounded-xl border border-purple-300 shadow-sm w-20 animate-fade-in';
+      div.innerHTML = `<i class="fa-solid ${item.icon} text-2xl ${item.color}"></i><span class="font-bold text-xs mt-1">${item.name}</span>`;
+      progressArea.appendChild(div);
+
+      if (userRetencaoSequence.length === 3) {
+        checkRetencaoResult();
+      }
+    }
+
+    function checkRetencaoResult() {
+      const isCorrect = userRetencaoSequence.every((val, idx) => val.name === currentRetencaoSequence[idx].name);
+      const fb = document.getElementById('retencaoFeedback');
+      if (isCorrect) {
+        fb.className = 'text-green-600 font-bold text-2xl mt-4';
+        fb.innerText = 'Parabéns! Sua memória retaveu a ordem perfeitamente!';
+        speakText('Parabéns! Você lembrou toda a sequência perfeitamente!');
+        confetti({ particleCount: 50, spread: 60 });
+      } else {
+        fb.className = 'text-purple-800 font-bold text-xl mt-4';
+        fb.innerText = 'Ótimo esforço! Vamos praticar novamente com uma nova sequência.';
+        speakText('Muito bem por tentar! Praticar fortalece sua memória.');
+      }
+      setTimeout(initRetencaoTask, 3000);
+    }
+
+    // 3. BARREIRAS SENSORIAIS
+    const sensorialData = [
+      { prompt: "Qual órgão do corpo usamos para ESCUTAR uma boa música?", sound: "som de música", icon: "fa-ear-listen", options: [{ text: "Ouvidos", icon: "fa-ear-listen", correct: true }, { text: "Olhos", icon: "fa-eye", correct: false }, { text: "Mãos", icon: "fa-hand", correct: false }] },
+      { prompt: "Qual sentido nos permite VER a beleza das cores?", sound: "visão clara", icon: "fa-eye", options: [{ text: "Visão (Olhos)", icon: "fa-eye", correct: true }, { text: "Tato (Mãos)", icon: "fa-hand", correct: false }, { text: "Olfato (Nariz)", icon: "fa-nose", correct: false }] }
+    ];
+    let currentSensorialIdx = 0;
+
+    function initSensorialTask() {
+      const data = sensorialData[currentSensorialIdx];
+      document.getElementById('sensorialPrompt').innerText = data.prompt;
+      speakText(data.prompt);
+
+      const grid = document.getElementById('sensorialGrid');
+      grid.innerHTML = '';
+      document.getElementById('sensorialFeedback').innerText = '';
+
+      data.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-senior bg-teal-50 hover:bg-teal-100 border-2 border-teal-300 p-6 rounded-2xl flex flex-col items-center justify-center gap-3 shadow-sm focus-ring';
+        btn.innerHTML = `<i class="fa-solid ${opt.icon} text-5xl text-teal-700"></i><span class="font-bold text-xl text-slate-800">${opt.text}</span>`;
+        btn.onclick = () => {
+          const fb = document.getElementById('sensorialFeedback');
+          if (opt.correct) {
+            fb.className = 'text-green-600 font-bold text-2xl';
+            fb.innerText = 'Resposta Correta! Percepção perfeita!';
+            speakText('Resposta correta!');
+            confetti({ particleCount: 40 });
+            currentSensorialIdx = (currentSensorialIdx + 1) % sensorialData.length;
+            setTimeout(initSensorialTask, 2500);
+          } else {
+            fb.className = 'text-teal-800 font-bold text-xl';
+            fb.innerText = 'Continue tentando! Pense no sentido correspondente.';
+            speakText('Continue tentando!');
+          }
         };
-    </script>
+        grid.appendChild(btn);
+      });
+    }
+
+    function playSensorialSound() {
+      speakText(sensorialData[currentSensorialIdx].prompt);
+    }
+
+    // 4. AUTOCONFIANÇA E PSICOLÓGICO
+    function readAffirmation() {
+      const text = document.getElementById('affirmationText').innerText;
+      speakText(text);
+    }
+
+    function toggleAchievement(btn) {
+      const iconDiv = btn.querySelector('.check-icon');
+      if (btn.classList.contains('bg-green-50')) {
+        btn.classList.remove('bg-green-50', 'border-green-500');
+        btn.classList.add('bg-slate-50', 'border-slate-200');
+        iconDiv.classList.remove('bg-green-500', 'text-white', 'border-green-500');
+        iconDiv.classList.add('border-slate-400', 'text-slate-400');
+      } else {
+        btn.classList.add('bg-green-50', 'border-green-500');
+        btn.classList.remove('bg-slate-50', 'border-slate-200');
+        iconDiv.classList.add('bg-green-500', 'text-white', 'border-green-500');
+        iconDiv.classList.remove('border-slate-400', 'text-slate-400');
+        speakText('Parabéns pela conquista realizada hoje!');
+        confetti({ particleCount: 30, origin: { y: 0.8 } });
+      }
+    }
+
+    // 5. OBJETOS E CÔMODOS
+    const objectsData = [
+      { name: "Sabonete", icon: "fa-soap", room: "Banheiro" },
+      { name: "Frigideira", icon: "fa-kitchen-set", room: "Cozinha" },
+      { name: "Travesseiro", icon: "fa-bed", room: "Quarto" },
+      { name: "Controle Remoto", icon: "fa-tv", room: "Sala" },
+      { name: "Escova de Dentes", icon: "fa-tooth", room: "Banheiro" },
+      { name: "Almofada", icon: "fa-couch", room: "Sala" }
+    ];
+    const roomList = [
+      { name: "Banheiro", icon: "fa-bath", class: "bg-cyan-600" },
+      { name: "Cozinha", icon: "fa-utensils", class: "bg-amber-600" },
+      { name: "Quarto", icon: "fa-bed", class: "bg-indigo-600" },
+      { name: "Sala", icon: "fa-tv", class: "bg-rose-600" }
+    ];
+    let currentObject = null;
+
+    function loadObjectQuestion() {
+      currentObject = objectsData[Math.floor(Math.random() * objectsData.length)];
+      document.getElementById('objectIcon').innerHTML = `<i class="fa-solid ${currentObject.icon}"></i>`;
+      document.getElementById('objectName').innerText = currentObject.name;
+      document.getElementById('objetosFeedback').innerText = '';
+
+      speakText(`Onde costuma ser guardado o objeto: ${currentObject.name}?`);
+
+      const container = document.getElementById('roomOptions');
+      container.innerHTML = '';
+
+      roomList.forEach(room => {
+        const btn = document.createElement('button');
+        btn.className = `btn-senior ${room.class} text-white font-bold text-xl py-6 px-4 rounded-2xl flex flex-col items-center justify-center gap-2 shadow-md focus-ring`;
+        btn.innerHTML = `<i class="fa-solid ${room.icon} text-3xl"></i><span>${room.name}</span>`;
+        btn.onclick = () => {
+          const fb = document.getElementById('objetosFeedback');
+          if (room.name === currentObject.room) {
+            fb.className = 'text-green-600 font-bold text-2xl';
+            fb.innerText = `Correto! O objeto ${currentObject.name} fica no(a) ${room.name}.`;
+            speakText(`Correto! Fica no ${room.name}.`);
+            confetti({ particleCount: 40 });
+            setTimeout(loadObjectQuestion, 2500);
+          } else {
+            fb.className = 'text-slate-700 font-bold text-xl';
+            fb.innerText = `Tente novamente. O objeto ${currentObject.name} não costuma ficar no(a) ${room.name}.`;
+            speakText(`Tente novamente.`);
+          }
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    // 6. JOGO DAS CORES E FORMAS
+    const colorCardsData = [
+      { color: "Vermelho", shape: "Círculo", icon: "fa-circle", bg: "bg-red-500 text-white" },
+      { color: "Azul", shape: "Quadrado", icon: "fa-square", bg: "bg-blue-600 text-white" },
+      { color: "Verde", shape: "Triângulo", icon: "fa-play", bg: "bg-emerald-600 text-white" },
+      { color: "Amarelo", shape: "Estrela", icon: "fa-star", bg: "bg-amber-400 text-slate-900" }
+    ];
+    let memoryDeck = [];
+    let flippedCards = [];
+
+    function initColorMemory() {
+      const board = document.getElementById('colorMemoryBoard');
+      board.innerHTML = '';
+      document.getElementById('coresFeedback').innerText = '';
+
+      memoryDeck = [...colorCardsData, ...colorCardsData]
+        .map((item, idx) => ({ ...item, id: idx }))
+        .sort(() => Math.random() - 0.5);
+
+      flippedCards = [];
+
+      memoryDeck.forEach(card => {
+        const btn = document.createElement('button');
+        btn.dataset.id = card.id;
+        btn.className = 'btn-senior bg-slate-200 hover:bg-slate-300 border-2 border-slate-300 rounded-2xl h-36 flex flex-col items-center justify-center font-bold text-lg shadow-sm focus-ring';
+        btn.innerHTML = `<i class="fa-solid fa-question text-4xl text-slate-400"></i>`;
+        btn.onclick = () => flipColorCard(btn, card);
+        board.appendChild(btn);
+      });
+    }
+
+    function flipColorCard(btn, card) {
+      if (flippedCards.length >= 2 || btn.classList.contains('matched') || flippedCards.some(c => c.btn === btn)) return;
+
+      btn.className = `btn-senior ${card.bg} border-4 border-slate-900 rounded-2xl h-36 flex flex-col items-center justify-center font-bold text-lg shadow-md`;
+      btn.innerHTML = `<i class="fa-solid ${card.icon} text-4xl mb-1"></i><span>${card.color}</span><span class="text-xs uppercase tracking-wider">${card.shape}</span>`;
+
+      speakText(`${card.color} ${card.shape}`);
+      flippedCards.push({ btn, card });
+
+      if (flippedCards.length === 2) {
+        const [c1, c2] = flippedCards;
+        if (c1.card.color === c2.card.color) {
+          c1.btn.classList.add('matched');
+          c2.btn.classList.add('matched');
+          document.getElementById('coresFeedback').className = 'text-green-600 font-bold text-2xl';
+          document.getElementById('coresFeedback').innerText = 'Par de cores perfeito!';
+          confetti({ particleCount: 30 });
+          flippedCards = [];
+        } else {
+          setTimeout(() => {
+            c1.btn.className = 'btn-senior bg-slate-200 hover:bg-slate-300 border-2 border-slate-300 rounded-2xl h-36 flex flex-col items-center justify-center font-bold text-lg shadow-sm focus-ring';
+            c1.btn.innerHTML = `<i class="fa-solid fa-question text-4xl text-slate-400"></i>`;
+            c2.btn.className = 'btn-senior bg-slate-200 hover:bg-slate-300 border-2 border-slate-300 rounded-2xl h-36 flex flex-col items-center justify-center font-bold text-lg shadow-sm focus-ring';
+            c2.btn.innerHTML = `<i class="fa-solid fa-question text-4xl text-slate-400"></i>`;
+            flippedCards = [];
+          }, 1200);
+        }
+      }
+    }
+
+    // 7. MOVIMENTO GLOBAL
+    function resetGlobalTarget() {
+      const btn = document.getElementById('globalTargetBtn');
+      const area = document.getElementById('globalPlayArea');
+      const maxX = area.clientWidth - 150;
+      const maxY = area.clientHeight - 150;
+
+      const randomX = Math.max(10, Math.floor(Math.random() * maxX));
+      const randomY = Math.max(10, Math.floor(Math.random() * maxY));
+
+      btn.style.left = randomX + 'px';
+      btn.style.top = randomY + 'px';
+    }
+
+    function hitGlobalTarget() {
+      speakText('Muito bem!');
+      confetti({ particleCount: 30 });
+      resetGlobalTarget();
+    }
+
+    // 8. TRILHA PRECISA (MOTORA FINA)
+    let canvas, ctx, isDrawing = false, currentPathType = 'straight';
+
+    function initFineCanvas() {
+      canvas = document.getElementById('fineCanvas');
+      if (!canvas) return;
+      ctx = canvas.getContext('2d');
+
+      canvas.onmousedown = startFineTrace;
+      canvas.onmousemove = drawFineTrace;
+      canvas.onmouseup = stopFineTrace;
+
+      canvas.ontouchstart = (e) => { startFineTrace(e.touches[0]); };
+      canvas.ontouchmove = (e) => { drawFineTrace(e.touches[0]); };
+      canvas.ontouchend = stopFineTrace;
+
+      drawFinePath();
+    }
+
+    function setFinePath(type) {
+      currentPathType = type;
+      drawFinePath();
+    }
+
+    function drawFinePath() {
+      if (!ctx) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.beginPath();
+      ctx.lineWidth = 40;
+      ctx.strokeStyle = '#E2E8F0';
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      if (currentPathType === 'straight') {
+        ctx.moveTo(60, 150);
+        ctx.lineTo(540, 150);
+      } else if (currentPathType === 'curve') {
+        ctx.moveTo(60, 200);
+        ctx.quadraticCurveTo(300, 30, 540, 200);
+      } else if (currentPathType === 'zigzag') {
+        ctx.moveTo(60, 200);
+        ctx.lineTo(200, 70);
+        ctx.lineTo(400, 230);
+        ctx.lineTo(540, 100);
+      }
+      ctx.stroke();
+
+      // Ponto A
+      ctx.beginPath();
+      ctx.arc(60, currentPathType === 'zigzag' ? 200 : (currentPathType === 'curve' ? 200 : 150), 20, 0, Math.PI * 2);
+      ctx.fillStyle = '#16A34A';
+      ctx.fill();
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'bold 16px sans-serif';
+      ctx.fillText('A', 55, currentPathType === 'zigzag' ? 205 : (currentPathType === 'curve' ? 205 : 155));
+
+      // Ponto B
+      ctx.beginPath();
+      ctx.arc(540, currentPathType === 'zigzag' ? 100 : (currentPathType === 'curve' ? 200 : 150), 20, 0, Math.PI * 2);
+      ctx.fillStyle = '#DC2626';
+      ctx.fill();
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillText('B', 535, currentPathType === 'zigzag' ? 105 : (currentPathType === 'curve' ? 205 : 155));
+    }
+
+    function startFineTrace(e) {
+      isDrawing = true;
+      drawFineTrace(e);
+    }
+
+    function drawFineTrace(e) {
+      if (!isDrawing) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.clientX - rect.left) * (canvas.width / rect.getBoundingClientRect().width);
+      const y = (e.clientY - rect.top) * (canvas.height / rect.getBoundingClientRect().height);
+
+      ctx.beginPath();
+      ctx.arc(x, y, 8, 0, Math.PI * 2);
+      ctx.fillStyle = '#2563EB';
+      ctx.fill();
+    }
+
+    function stopFineTrace() {
+      if (!isDrawing) return;
+      isDrawing = false;
+      document.getElementById('finaFeedback').innerText = 'Excelente traçado! Continue treinando.';
+      speakText('Excelente traçado!');
+    }
+
+    // Inicialização ao carregar
+    window.onload = () => {
+      initDuplaTask();
+    };
+  </script>
 </body>
 </html>

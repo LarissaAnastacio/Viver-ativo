@@ -3,6 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Diretrizes de Segurança da Informação e Privacidade -->
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'none';">
+  
   <title>Viver Ativo & Cognitivo - Estímulo Multissensorial e Motor</title>
   
   <!-- Fontes Google para alta legibilidade -->
@@ -78,7 +83,7 @@
         </div>
       </div>
 
-      <!-- Barra de Controle de Voz e Leitura -->
+      <!-- Barra de Controle de Voz e Privacidade -->
       <div class="flex items-center gap-3">
         <button id="toggleAudioBtn" onclick="toggleAudioHelp()" class="btn-senior bg-slate-800 hover:bg-slate-700 text-teal-300 border border-teal-500/40 px-4 py-2 rounded-xl flex items-center gap-2 font-bold text-base focus-ring">
           <i id="audioIcon" class="fa-solid fa-volume-high text-xl"></i>
@@ -92,13 +97,13 @@
   <nav class="bg-slate-200 border-b border-slate-300 sticky top-[68px] z-40 shadow-sm">
     <div class="max-w-6xl mx-auto px-2 py-2 flex items-center overflow-x-auto gap-2 no-scrollbar">
       <button onclick="switchTab('tab-dupla')" id="btn-tab-dupla" class="tab-btn active border-b-4 border-amber-600 bg-white text-slate-900 px-4 py-3 rounded-t-xl font-bold text-lg whitespace-nowrap shadow-sm focus-ring">
-        <i class="fa-solid fa-[#D97706] fa-layer-group mr-2 text-amber-600"></i>1. Dupla Tarefa
+        <i class="fa-solid fa-layer-group mr-2 text-amber-600"></i>1. Dupla Tarefa
       </button>
       <button onclick="switchTab('tab-retencao')" id="btn-tab-retencao" class="tab-btn border-b-4 border-transparent hover:bg-slate-100 text-slate-700 px-4 py-3 rounded-t-xl font-bold text-lg whitespace-nowrap focus-ring">
         <i class="fa-solid fa-brain mr-2 text-purple-600"></i>2. Retenção & Memória
       </button>
       <button onclick="switchTab('tab-sensorial')" id="btn-tab-sensorial" class="tab-btn border-b-4 border-transparent hover:bg-slate-100 text-slate-700 px-4 py-3 rounded-t-xl font-bold text-lg whitespace-nowrap focus-ring">
-        <i class="fa-solid fa-[#0D9488] fa-eye mr-2 text-teal-600"></i>3. Percepção & Sensorial
+        <i class="fa-solid fa-eye mr-2 text-teal-600"></i>3. Percepção & Sensorial
       </button>
       <button onclick="switchTab('tab-psico')" id="btn-tab-psico" class="tab-btn border-b-4 border-transparent hover:bg-slate-100 text-slate-700 px-4 py-3 rounded-t-xl font-bold text-lg whitespace-nowrap focus-ring">
         <i class="fa-solid fa-sun mr-2 text-rose-600"></i>4. Autoconfiança
@@ -110,7 +115,7 @@
         <i class="fa-solid fa-palette mr-2 text-green-600"></i>6. Cores & Formas
       </button>
       <button onclick="switchTab('tab-global')" id="btn-tab-global" class="tab-btn border-b-4 border-transparent hover:bg-slate-100 text-slate-700 px-4 py-3 rounded-t-xl font-bold text-lg whitespace-nowrap focus-ring">
-        <i class="fa-solid fa-[#0284C7] fa-child-reaching mr-2 text-sky-600"></i>7. Movimento Global
+        <i class="fa-solid fa-child-reaching mr-2 text-sky-600"></i>7. Movimento Global
       </button>
       <button onclick="switchTab('tab-fina')" id="btn-tab-fina" class="tab-btn border-b-4 border-transparent hover:bg-slate-100 text-slate-700 px-4 py-3 rounded-t-xl font-bold text-lg whitespace-nowrap focus-ring">
         <i class="fa-solid fa-hand-pointer mr-2 text-indigo-600"></i>8. Trilha Fina
@@ -265,31 +270,36 @@
           </button>
         </div>
 
-        <!-- Registro de Conquistas Pessoais Sem Estresse -->
+        <!-- Registro de Conquistas Pessoais (Armazenado apenas localmente) -->
         <div class="space-y-4">
-          <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
-            <i class="fa-solid fa-[#16A34A] fa-circle-check text-green-600"></i> O que você realizou hoje? (Toque para marcar):
-          </h3>
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-green-600"></i> O que você realizou hoje? (Salvo apenas no seu aparelho):
+            </h3>
+            <button onclick="clearLocalAchievements()" class="text-sm text-slate-500 hover:text-rose-600 underline font-bold focus-ring">
+              Limpar marcações locais
+            </button>
+          </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <button onclick="toggleAchievement(this)" class="achievement-btn btn-senior p-5 border-2 border-slate-200 rounded-2xl flex items-center gap-4 text-left hover:border-rose-400 bg-slate-50 focus-ring">
+            <button data-ach-id="ach-1" onclick="toggleAchievement(this)" class="achievement-btn btn-senior p-5 border-2 border-slate-200 rounded-2xl flex items-center gap-4 text-left hover:border-rose-400 bg-slate-50 focus-ring">
               <div class="w-10 h-10 rounded-full border-2 border-slate-400 flex items-center justify-center text-xl text-slate-400 check-icon">
                 <i class="fa-solid fa-check"></i>
               </div>
               <span class="text-lg font-bold text-slate-800">Dediquei um tempo para cuidar de mim</span>
             </button>
-            <button onclick="toggleAchievement(this)" class="achievement-btn btn-senior p-5 border-2 border-slate-200 rounded-2xl flex items-center gap-4 text-left hover:border-rose-400 bg-slate-50 focus-ring">
+            <button data-ach-id="ach-2" onclick="toggleAchievement(this)" class="achievement-btn btn-senior p-5 border-2 border-slate-200 rounded-2xl flex items-center gap-4 text-left hover:border-rose-400 bg-slate-50 focus-ring">
               <div class="w-10 h-10 rounded-full border-2 border-slate-400 flex items-center justify-center text-xl text-slate-400 check-icon">
                 <i class="fa-solid fa-check"></i>
               </div>
               <span class="text-lg font-bold text-slate-800">Realizei exercícios leves no meu ritmo</span>
             </button>
-            <button onclick="toggleAchievement(this)" class="achievement-btn btn-senior p-5 border-2 border-slate-200 rounded-2xl flex items-center gap-4 text-left hover:border-rose-400 bg-slate-50 focus-ring">
+            <button data-ach-id="ach-3" onclick="toggleAchievement(this)" class="achievement-btn btn-senior p-5 border-2 border-slate-200 rounded-2xl flex items-center gap-4 text-left hover:border-rose-400 bg-slate-50 focus-ring">
               <div class="w-10 h-10 rounded-full border-2 border-slate-400 flex items-center justify-center text-xl text-slate-400 check-icon">
                 <i class="fa-solid fa-check"></i>
               </div>
               <span class="text-lg font-bold text-slate-800">Experimentei um novo jogo cognitivo</span>
             </button>
-            <button onclick="toggleAchievement(this)" class="achievement-btn btn-senior p-5 border-2 border-slate-200 rounded-2xl flex items-center gap-4 text-left hover:border-rose-400 bg-slate-50 focus-ring">
+            <button data-ach-id="ach-4" onclick="toggleAchievement(this)" class="achievement-btn btn-senior p-5 border-2 border-slate-200 rounded-2xl flex items-center gap-4 text-left hover:border-rose-400 bg-slate-50 focus-ring">
               <div class="w-10 h-10 rounded-full border-2 border-slate-400 flex items-center justify-center text-xl text-slate-400 check-icon">
                 <i class="fa-solid fa-check"></i>
               </div>
@@ -344,7 +354,7 @@
           </button>
         </div>
         <p class="text-lg md:text-xl text-green-950 font-medium">
-          Encontre os pares iguais. Cada carta combina **Cor, Forma e Nome Por Extenso** para facilitar a leitura.
+          Encontre os pares iguais. Cada carta combina <strong>Cor, Forma e Nome Por Extenso</strong> para facilitar a leitura.
         </p>
       </div>
 
@@ -416,23 +426,77 @@
 
   </main>
 
-  <!-- Rodapé com Créditos de Direitos Autorais -->
+  <!-- Rodapé com Créditos de Direitos Autorais e Privacidade LGPD -->
   <footer class="bg-slate-900 text-white mt-12 py-8 border-t-4 border-teal-500">
-    <div class="max-w-6xl mx-auto px-4 text-center space-y-3">
+    <div class="max-w-6xl mx-auto px-4 text-center space-y-4">
       <p class="text-lg md:text-xl font-bold tracking-wide text-slate-200">
         © 2026 Larissa da Silva Anastácio. Todos os direitos reservados.
       </p>
       <p class="text-sm text-slate-400">
         Desenvolvido com foco na Acessibilidade, Inclusão Cognitiva e Motora para Terceira Idade.
       </p>
+      <div class="pt-2 flex flex-wrap items-center justify-center gap-4">
+        <button onclick="openPrivacyModal()" class="btn-senior bg-slate-800 hover:bg-slate-700 text-teal-300 border border-teal-500/50 px-5 py-2.5 rounded-xl text-base font-bold focus-ring inline-flex items-center gap-2">
+          <i class="fa-solid fa-shield-halved text-lg"></i> Política de Privacidade e Segurança (LGPD)
+        </button>
+      </div>
     </div>
   </footer>
 
-  <!-- SCRIPT DE LÓGICA E INTERATIVIDADE -->
+  <!-- Modal de Privacidade, Segurança da Informação e Ética Digital -->
+  <div id="privacyModal" role="dialog" aria-modal="true" aria-labelledby="privacyModalTitle" class="hidden fixed inset-0 bg-slate-950/80 z-50 flex items-center justify-center p-4">
+    <div class="bg-white border-4 border-teal-600 rounded-3xl max-w-2xl w-full p-6 md:p-8 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto text-left">
+      <div class="flex items-center justify-between border-b-2 border-slate-200 pb-4">
+        <h2 id="privacyModalTitle" class="font-heading text-2xl md:text-3xl font-bold text-slate-900 flex items-center gap-3">
+          <i class="fa-solid fa-shield-halved text-teal-600"></i> Compromisso com sua Segurança
+        </h2>
+        <button onclick="closePrivacyModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-900 font-bold px-4 py-2 rounded-xl text-lg focus-ring">
+          Fechar X
+        </button>
+      </div>
+
+      <div class="space-y-4 text-lg text-slate-800 leading-relaxed">
+        <div class="bg-teal-50 border-l-4 border-teal-600 p-4 rounded-r-xl">
+          <p class="font-bold text-teal-950">Conformidade com a LGPD (Lei nº 13.709/2018) e Ética Digital</p>
+        </div>
+
+        <p><strong>1. Coleta Zero de Dados Pessoais:</strong> Este aplicativo não exige cadastro e não coleta nome, CPF, e-mail, telefone, idade ou localização. Você utiliza todos os jogos com total anonimato.</p>
+        
+        <p><strong>2. Armazenamento Exclusivamente Local:</strong> Suas conquistas no Mural da Autoconfiança e preferências de voz são salvas apenas na memória interna do seu próprio navegador (<code>localStorage</code>), nunca sendo enviadas para servidores externos ou terceiros.</p>
+        
+        <p><strong>3. Ambiente Seguro e Livre de Manipulação:</strong> Seguindo as diretrizes éticas de acessibilidade para a terceira idade, esta plataforma é livre de anúncios enganosos, rastreadores ocultos, cronômetros punitivos ou cobranças.</p>
+        
+        <p><strong>4. Privacidade de Áudio e Microfone:</strong> O recurso de leitura em voz alta usa apenas o sintetizador de voz nativo do seu dispositivo. O microfone e a câmera nunca são acessados ou gravados.</p>
+      </div>
+
+      <div class="pt-4 border-t-2 border-slate-200 flex flex-wrap items-center justify-between gap-4">
+        <button onclick="speakPrivacySummary()" class="btn-senior bg-slate-200 hover:bg-slate-300 text-slate-900 font-bold text-lg px-6 py-3 rounded-2xl focus-ring inline-flex items-center gap-2">
+          <i class="fa-solid fa-volume-high"></i> Ouvir Resumo
+        </button>
+        <button onclick="closePrivacyModal()" class="btn-senior bg-teal-600 hover:bg-teal-700 text-white font-bold text-xl px-8 py-3 rounded-2xl focus-ring">
+          Entendi e Concordo
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT DE LÓGICA, PRIVACIDADE LOCAL E INTERATIVIDADE -->
   <script>
-    // Configurações Globais
-    let audioEnabled = true;
+    // Configurações Globais e Preferências Locais (Sem envio externo)
+    let audioEnabled = localStorage.getItem('viverAtivo_audio') !== 'false';
     const synth = window.speechSynthesis;
+
+    function updateAudioUI() {
+      const icon = document.getElementById('audioIcon');
+      const text = document.getElementById('audioStatusText');
+      if (audioEnabled) {
+        icon.className = 'fa-solid fa-volume-high text-xl';
+        text.innerText = 'Voz: Ativada';
+      } else {
+        icon.className = 'fa-solid fa-volume-xmark text-xl text-slate-400';
+        text.innerText = 'Voz: Desativada';
+      }
+    }
 
     function speakText(text) {
       if (!audioEnabled || !synth) return;
@@ -446,17 +510,27 @@
 
     function toggleAudioHelp() {
       audioEnabled = !audioEnabled;
-      const icon = document.getElementById('audioIcon');
-      const text = document.getElementById('audioStatusText');
+      localStorage.setItem('viverAtivo_audio', audioEnabled);
+      updateAudioUI();
       if (audioEnabled) {
-        icon.className = 'fa-solid fa-volume-high text-xl';
-        text.innerText = 'Voz: Ativada';
         speakText('Voz ativada com sucesso.');
-      } else {
-        icon.className = 'fa-solid fa-volume-xmark text-xl text-slate-400';
-        text.innerText = 'Voz: Desativada';
-        if (synth) synth.cancel();
+      } else if (synth) {
+        synth.cancel();
       }
+    }
+
+    // Modal de Privacidade e LGPD
+    function openPrivacyModal() {
+      document.getElementById('privacyModal').classList.remove('hidden');
+    }
+
+    function closePrivacyModal() {
+      document.getElementById('privacyModal').classList.add('hidden');
+      if (synth) synth.cancel();
+    }
+
+    function speakPrivacySummary() {
+      speakText('Compromisso com sua segurança. Este site não coleta nenhum dado pessoal, não usa câmera ou microfone, e guarda suas conquistas apenas no seu próprio aparelho com total privacidade.');
     }
 
     function switchTab(tabId) {
@@ -478,6 +552,7 @@
       if (tabId === 'tab-dupla') initDuplaTask();
       if (tabId === 'tab-retencao') initRetencaoTask();
       if (tabId === 'tab-sensorial') initSensorialTask();
+      if (tabId === 'tab-psico') loadSavedAchievements();
       if (tabId === 'tab-objetos') loadObjectQuestion();
       if (tabId === 'tab-cores') initColorMemory();
       if (tabId === 'tab-global') resetGlobalTarget();
@@ -566,7 +641,7 @@
       { name: 'Chave', icon: 'fa-key', color: 'text-amber-500' },
       { name: 'Estrela', icon: 'fa-star', color: 'text-yellow-500' },
       { name: 'Carro', icon: 'fa-car', color: 'text-blue-500' },
-      { name: 'Flor', icon: 'fa-flower-tulip', color: 'text-pink-500' }
+      { name: 'Flor', icon: 'fa-spa', color: 'text-pink-500' }
     ];
     let currentRetencaoSequence = [];
     let userRetencaoSequence = [];
@@ -626,7 +701,7 @@
       if (userRetencaoSequence.length === 1) progressArea.innerHTML = '';
 
       const div = document.createElement('div');
-      div.className = 'flex flex-col items-center bg-white p-3 rounded-xl border border-purple-300 shadow-sm w-20 animate-fade-in';
+      div.className = 'flex flex-col items-center bg-white p-3 rounded-xl border border-purple-300 shadow-sm w-20';
       div.innerHTML = `<i class="fa-solid ${item.icon} text-2xl ${item.color}"></i><span class="font-bold text-xs mt-1">${item.name}</span>`;
       progressArea.appendChild(div);
 
@@ -640,7 +715,7 @@
       const fb = document.getElementById('retencaoFeedback');
       if (isCorrect) {
         fb.className = 'text-green-600 font-bold text-2xl mt-4';
-        fb.innerText = 'Parabéns! Sua memória retaveu a ordem perfeitamente!';
+        fb.innerText = 'Parabéns! Sua memória reteve a ordem perfeitamente!';
         speakText('Parabéns! Você lembrou toda a sequência perfeitamente!');
         confetti({ particleCount: 50, spread: 60 });
       } else {
@@ -653,8 +728,8 @@
 
     // 3. BARREIRAS SENSORIAIS
     const sensorialData = [
-      { prompt: "Qual órgão do corpo usamos para ESCUTAR uma boa música?", sound: "som de música", icon: "fa-ear-listen", options: [{ text: "Ouvidos", icon: "fa-ear-listen", correct: true }, { text: "Olhos", icon: "fa-eye", correct: false }, { text: "Mãos", icon: "fa-hand", correct: false }] },
-      { prompt: "Qual sentido nos permite VER a beleza das cores?", sound: "visão clara", icon: "fa-eye", options: [{ text: "Visão (Olhos)", icon: "fa-eye", correct: true }, { text: "Tato (Mãos)", icon: "fa-hand", correct: false }, { text: "Olfato (Nariz)", icon: "fa-nose", correct: false }] }
+      { prompt: "Qual órgão do corpo usamos para ESCUTAR uma boa música?", icon: "fa-ear-listen", options: [{ text: "Ouvidos", icon: "fa-ear-listen", correct: true }, { text: "Olhos", icon: "fa-eye", correct: false }, { text: "Mãos", icon: "fa-hand", correct: false }] },
+      { prompt: "Qual sentido nos permite VER a beleza das cores?", icon: "fa-eye", options: [{ text: "Visão (Olhos)", icon: "fa-eye", correct: true }, { text: "Tato (Mãos)", icon: "fa-hand", correct: false }, { text: "Caminhar (Pés)", icon: "fa-shoe-prints", correct: false }] }
     ];
     let currentSensorialIdx = 0;
 
@@ -694,27 +769,53 @@
       speakText(sensorialData[currentSensorialIdx].prompt);
     }
 
-    // 4. AUTOCONFIANÇA E PSICOLÓGICO
+    // 4. AUTOCONFIANÇA E PSICOLÓGICO (Persistência estritamente local via localStorage)
     function readAffirmation() {
       const text = document.getElementById('affirmationText').innerText;
       speakText(text);
     }
 
-    function toggleAchievement(btn) {
+    function applyAchievementStyle(btn, isChecked) {
       const iconDiv = btn.querySelector('.check-icon');
-      if (btn.classList.contains('bg-green-50')) {
-        btn.classList.remove('bg-green-50', 'border-green-500');
-        btn.classList.add('bg-slate-50', 'border-slate-200');
-        iconDiv.classList.remove('bg-green-500', 'text-white', 'border-green-500');
-        iconDiv.classList.add('border-slate-400', 'text-slate-400');
-      } else {
+      if (isChecked) {
         btn.classList.add('bg-green-50', 'border-green-500');
         btn.classList.remove('bg-slate-50', 'border-slate-200');
         iconDiv.classList.add('bg-green-500', 'text-white', 'border-green-500');
         iconDiv.classList.remove('border-slate-400', 'text-slate-400');
+      } else {
+        btn.classList.remove('bg-green-50', 'border-green-500');
+        btn.classList.add('bg-slate-50', 'border-slate-200');
+        iconDiv.classList.remove('bg-green-500', 'text-white', 'border-green-500');
+        iconDiv.classList.add('border-slate-400', 'text-slate-400');
+      }
+    }
+
+    function loadSavedAchievements() {
+      const saved = JSON.parse(localStorage.getItem('viverAtivo_achievements') || '{}');
+      document.querySelectorAll('.achievement-btn').forEach(btn => {
+        const id = btn.dataset.achId;
+        applyAchievementStyle(btn, Boolean(saved[id]));
+      });
+    }
+
+    function toggleAchievement(btn) {
+      const id = btn.dataset.achId;
+      const saved = JSON.parse(localStorage.getItem('viverAtivo_achievements') || '{}');
+      const newState = !saved[id];
+      saved[id] = newState;
+      localStorage.setItem('viverAtivo_achievements', JSON.stringify(saved));
+      applyAchievementStyle(btn, newState);
+
+      if (newState) {
         speakText('Parabéns pela conquista realizada hoje!');
         confetti({ particleCount: 30, origin: { y: 0.8 } });
       }
+    }
+
+    function clearLocalAchievements() {
+      localStorage.removeItem('viverAtivo_achievements');
+      loadSavedAchievements();
+      speakText('Marcações limpas com sucesso.');
     }
 
     // 5. OBJETOS E CÔMODOS
@@ -940,6 +1041,8 @@
 
     // Inicialização ao carregar
     window.onload = () => {
+      updateAudioUI();
+      loadSavedAchievements();
       initDuplaTask();
     };
   </script>

@@ -78,6 +78,21 @@
     .shake-box {
       animation: shakeError 0.45s ease-in-out;
     }
+    @keyframes pulseMarker {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.08); }
+    }
+    .pedestrian-btn {
+      transition: top 1.1s ease-in-out, left 0.4s ease, transform 0.2s ease, box-shadow 0.2s ease;
+      transform: translate(-50%, -50%);
+      touch-action: manipulation;
+    }
+    .pedestrian-btn:hover {
+      transform: translate(-50%, -50%) scale(1.08);
+    }
+    .pedestrian-pulse {
+      animation: pulseMarker 1.6s infinite ease-in-out;
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col font-sans text-slate-900 bg-slate-50">
@@ -153,7 +168,7 @@
             type="text" 
             id="activitySearchInput" 
             oninput="filterActivities()" 
-            placeholder="Procurar atividade (ex: Memória, Cores, Casa, Trilha, Movimento...)" 
+            placeholder="Procurar atividade (ex: Memória, Cores, Casa, Travessia, Trilha...)" 
             aria-label="Procurar atividade pelo nome"
             class="w-full pl-12 pr-24 py-3.5 rounded-2xl border-2 border-slate-300 focus:border-teal-600 focus:outline-none bg-white text-slate-900 text-lg font-medium shadow-inner placeholder:text-slate-500"
           >
@@ -241,9 +256,9 @@
             </div>
           </button>
 
-          <button onclick="switchTab('tab-global')" id="btn-tab-global" data-search="7 movimento global braco toque alvo" class="tab-btn btn-senior bg-white/80 hover:bg-white border-2 border-slate-300 text-slate-800 p-3.5 rounded-2xl flex items-center gap-3 text-left shadow-sm focus-ring">
+          <button onclick="switchTab('tab-global')" id="btn-tab-global" data-search="7 movimento global travessia rua semaforo farol pedestre carro cachorro gato" class="tab-btn btn-senior bg-white/80 hover:bg-white border-2 border-slate-300 text-slate-800 p-3.5 rounded-2xl flex items-center gap-3 text-left shadow-sm focus-ring">
             <div class="w-11 h-11 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center text-xl shrink-0">
-              <i class="fa-solid fa-child-reaching"></i>
+              <i class="fa-solid fa-traffic-light"></i>
             </div>
             <div>
               <span class="text-xs font-bold uppercase tracking-wider text-sky-700 block">Atividade 7</span>
@@ -499,29 +514,116 @@
       </div>
     </section>
 
-    <!-- MÓDULO 7: COORDENAÇÃO MOTORA GLOBAL -->
+    <!-- MÓDULO 7: MOVIMENTO GLOBAL - MAPA INTERATIVO DE TRAVESSIA SEGURA -->
     <section id="tab-global" class="tab-content hidden space-y-6">
       <div class="bg-sky-50 border-l-8 border-sky-600 p-6 rounded-2xl shadow-sm">
         <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-          <h2 class="font-heading text-2xl md:text-3xl font-bold text-sky-900">7. Movimento Amplo (Motora Global)</h2>
+          <h2 class="font-heading text-2xl md:text-3xl font-bold text-sky-900">7. Travessia Segura na Cidade (Movimento Global)</h2>
           <button onclick="speakInstruction('global')" class="btn-senior text-sky-900 bg-sky-200 hover:bg-sky-300 px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 focus-ring">
             <i class="fa-solid fa-volume-high text-xl"></i> Ouvir instrução
           </button>
         </div>
         <p class="text-lg md:text-xl text-sky-950 font-medium">
-          Toque no círculo grande quando ele aparecer na tela. Exercite o movimento do braço e ombro.
+          Observe os <strong>Semáforos de Pedestres</strong> em cada faixa e clique nas pessoas e animais para ajudá-los a atravessar a rua em segurança. <strong>Cuidado:</strong> nunca atravesse no sinal vermelho ou amarelo!
         </p>
       </div>
 
-      <div class="bg-white border-2 border-slate-200 rounded-3xl p-4 shadow-md text-center">
-        <div id="globalPlayArea" class="relative w-full h-[380px] bg-slate-100 rounded-2xl border-2 border-dashed border-slate-300 overflow-hidden flex items-center justify-center">
-          <button id="globalTargetBtn" onclick="hitGlobalTarget()" class="btn-senior absolute w-32 h-32 md:w-36 md:h-36 bg-sky-500 hover:bg-sky-600 text-white rounded-full flex flex-col items-center justify-center shadow-xl border-4 border-white focus-ring">
-            <i class="fa-solid fa-hand-pointer text-4xl mb-1"></i>
-            <span class="font-bold text-lg">TOQUE AQUI</span>
+      <div class="bg-white border-2 border-sky-200 rounded-3xl p-4 md:p-6 shadow-md space-y-5">
+        
+        <!-- Painel Superior de Status da Travessia -->
+        <div class="flex flex-wrap items-center justify-between gap-4 bg-slate-900 text-white p-4 rounded-2xl">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-sky-500/20 border border-sky-400 flex items-center justify-center text-sky-300 text-2xl">
+              <i class="fa-solid fa-person-walking-arrow-right"></i>
+            </div>
+            <div>
+              <span class="text-xs uppercase font-bold tracking-wider text-sky-300 block">Missão de Cidadania</span>
+              <span id="crossingProgressText" class="font-heading text-xl md:text-2xl font-bold">Atravessaram em segurança: 0 de 6</span>
+            </div>
+          </div>
+
+          <button onclick="initCrossingGame()" class="btn-senior bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold px-5 py-2.5 rounded-xl text-base flex items-center gap-2 focus-ring">
+            <i class="fa-solid fa-rotate-right"></i> Reiniciar Mapa
           </button>
         </div>
-        <div id="globalFeedback" class="mt-4 min-h-[40px] font-bold text-xl text-sky-700">
-          Toque no botão azul para mover!
+
+        <!-- Banner Dinâmico de Alerta (Verde, Amarelo, Vermelho / Perigo) -->
+        <div id="crossingAlertBanner" role="status" aria-live="assertive" class="bg-sky-50 border-2 border-sky-300 text-sky-950 rounded-2xl p-4 font-bold text-lg md:text-xl flex items-center justify-center gap-3 transition-colors">
+          <i id="crossingAlertIcon" class="fa-solid fa-traffic-light text-2xl text-sky-600"></i>
+          <span id="globalFeedback">Aguarde o sinal de pedestre ficar VERDE para clicar na pessoa ou animal e atravessar!</span>
+        </div>
+
+        <!-- Legenda Rápida dos Sinais -->
+        <div class="flex flex-wrap items-center justify-center gap-4 text-sm md:text-base font-bold bg-slate-100 py-2.5 px-4 rounded-xl border border-slate-200">
+          <span class="flex items-center gap-2 text-green-700"><span class="w-4 h-4 rounded-full bg-green-500 border border-green-800 inline-block"></span> Pedestre VERDE: Pode atravessar</span>
+          <span class="flex items-center gap-2 text-amber-700"><span class="w-4 h-4 rounded-full bg-amber-400 border border-amber-700 inline-block"></span> Pedestre AMARELO: Atenção, aguarde</span>
+          <span class="flex items-center gap-2 text-rose-700"><span class="w-4 h-4 rounded-full bg-rose-600 border border-rose-900 inline-block"></span> Pedestre VERMELHO: Pare! Carros passando</span>
+        </div>
+
+        <!-- MAPA URBANO DE TRAVESSIA (AV. CENTRAL COM 3 FAIXAS INDEPENDENTES) -->
+        <div id="crossingMapWrapper" class="relative w-full h-[500px] md:h-[520px] rounded-3xl overflow-hidden border-4 border-slate-700 shadow-inner bg-emerald-200 select-none">
+          
+          <!-- Calçada Superior (Parque e Praça) -->
+          <div class="absolute top-0 left-0 right-0 h-[145px] bg-stone-200 border-b-4 border-stone-400 flex items-start justify-between px-4 pt-2">
+            <span class="bg-emerald-700 text-white text-xs font-bold px-3 py-1 rounded-full shadow"><i class="fa-solid fa-tree mr-1"></i> Calçada Norte (Praça)</span>
+            <span class="bg-slate-700 text-white text-xs font-bold px-3 py-1 rounded-full shadow hidden sm:inline-block">Clique no pedestre quando o boneco estiver VERDE</span>
+            <span class="bg-emerald-700 text-white text-xs font-bold px-3 py-1 rounded-full shadow"><i class="fa-solid fa-shop mr-1"></i> Mercado</span>
+          </div>
+
+          <!-- Asfalto da Avenida (Duas Pistas) -->
+          <div class="absolute top-[145px] bottom-[145px] left-0 right-0 bg-slate-800">
+            <!-- Linha Divisória Central Amarela -->
+            <div class="absolute top-1/2 left-0 right-0 border-t-4 border-dashed border-amber-400 -translate-y-1/2 opacity-80"></div>
+
+            <!-- Faixa de Pedestres 1 (Esquerda - 18%) -->
+            <div class="absolute top-0 bottom-0 left-[18%] -translate-x-1/2 w-24 flex flex-col justify-between py-2 opacity-90 pointer-events-none">
+              <div class="h-3.5 bg-white rounded-sm"></div>
+              <div class="h-3.5 bg-white rounded-sm"></div>
+              <div class="h-3.5 bg-white rounded-sm"></div>
+              <div class="h-3.5 bg-white rounded-sm"></div>
+              <div class="h-3.5 bg-white rounded-sm"></div>
+              <div class="h-3.5 bg-white rounded-sm"></div>
+              <div class="h-3.5 bg-white rounded-sm"></div>
+            </div>
+
+            <!-- Faixa de Pedestres 2 (Centro - 50%) -->
+            <div class="absolute top-0 bottom-0 left-[50%] -translate-x-1/2 w-24 flex flex-col justify-between py-2 opacity-90 pointer-events-none">
+              <div class="h-3.5 bg-white rounded-sm"></div>
+              <div class="h-3.5 bg-white rounded-sm"></div>
+              <div class="h-3.5 bg-white rounded-sm"></div>
+              <div class="h-3.5 bg-white rounded-sm"></div>
+              <div class="h-3.5 bg-white rounded-sm"></div>
+              <div class="h-3.5 bg-white rounded-sm"></div>
+              <div class="h-3.5 bg-white rounded-sm"></div>
+            </div>
+
+            <!-- Faixa de Pedestres 3 (Direita - 82%) -->
+            <div class="absolute top-0 bottom-0 left-[82%] -translate-x-1/2 w-24 flex flex-col justify-between py-2 opacity-90 pointer-events-none">
+              <div class="h-3.5 bg-white rounded-sm"></div>
+              <div class="h-3.5 bg-white rounded-sm"></div>
+              <div class="h-3.5 bg-white rounded-sm"></div>
+              <div class="h-3.5 bg-white rounded-sm"></div>
+              <div class="h-3.5 bg-white rounded-sm"></div>
+              <div class="h-3.5 bg-white rounded-sm"></div>
+              <div class="h-3.5 bg-white rounded-sm"></div>
+            </div>
+          </div>
+
+          <!-- Calçada Inferior (Bairro e Escola) -->
+          <div class="absolute bottom-0 left-0 right-0 h-[145px] bg-stone-200 border-t-4 border-stone-400 flex items-end justify-between px-4 pb-2">
+            <span class="bg-blue-700 text-white text-xs font-bold px-3 py-1 rounded-full shadow"><i class="fa-solid fa-school mr-1"></i> Calçada Sul (Escola)</span>
+            <span class="bg-blue-700 text-white text-xs font-bold px-3 py-1 rounded-full shadow"><i class="fa-solid fa-house-chimney mr-1"></i> Residências</span>
+          </div>
+
+          <!-- Camada de Semáforos de Pedestres e Carros (Gerado via JS) -->
+          <div id="crossingLightsLayer" class="absolute inset-0 pointer-events-none z-10"></div>
+
+          <!-- Camada de Veículos em Movimento: Carros, Caminhões, Ônibus e Motos -->
+          <div id="crossingVehiclesLayer" class="absolute inset-0 pointer-events-none z-20"></div>
+
+          <!-- Camada de Bonecos (Idosos, Crianças, Adultos, Cachorro e Gato) -->
+          <div id="crossingPedestriansLayer" class="absolute inset-0 z-30"></div>
+
         </div>
       </div>
     </section>
@@ -530,7 +632,7 @@
     <section id="tab-fina" class="tab-content hidden space-y-6">
       <div class="bg-indigo-50 border-l-8 border-indigo-600 p-6 rounded-2xl shadow-sm">
         <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-          <h2 class="font-heading text-2xl md:text-3xl font-bold text-indigo-900">8. Trilha Precisa (Desafio Motor Fino)</h2>
+          <h2 class="font-heading text-2xl md:text-3xl font-bold text-indigo-900">8. Trilha Precisa (Desafio Motor Fina)</h2>
           <button onclick="speakInstruction('fina')" class="btn-senior text-indigo-900 bg-indigo-200 hover:bg-indigo-300 px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 focus-ring">
             <i class="fa-solid fa-volume-high text-xl"></i> Ouvir instrução
           </button>
@@ -642,7 +744,7 @@
     </div>
   </div>
 
-  <!-- SCRIPT DE LÓGICA, BUSCA ACESSÍVEL, TRILHA FINA DE PRECISÃO E INTERATIVIDADE -->
+  <!-- SCRIPT DE LÓGICA, TRAVESSIA SEGURA, BUSCA ACESSÍVEL E INTERATIVIDADE -->
   <script>
     let audioEnabled = localStorage.getItem('viverAtivo_audio') !== 'false';
     const synth = window.speechSynthesis;
@@ -785,6 +887,11 @@
         btn.classList.add('border-2', 'border-slate-300', 'bg-white/80', 'text-slate-800', 'shadow-sm');
       });
 
+      // Pausa o loop de tráfego quando sair da aba 7
+      if (tabId !== 'tab-global') {
+        stopCrossingSimulation();
+      }
+
       const activeContent = document.getElementById(tabId);
       if (activeContent) activeContent.classList.remove('hidden');
 
@@ -806,7 +913,7 @@
       if (tabId === 'tab-psico') loadSavedAchievements();
       if (tabId === 'tab-objetos') loadObjectQuestion();
       if (tabId === 'tab-cores') initColorMemory();
-      if (tabId === 'tab-global') resetGlobalTarget();
+      if (tabId === 'tab-global') initCrossingGame();
       if (tabId === 'tab-fina') setTimeout(initFineCanvas, 100);
     }
 
@@ -818,7 +925,7 @@
         psico: 'Mural da autoconfiança. Leia a mensagem do dia e registre suas vitórias diárias no seu tempo.',
         objetos: 'Onde guardar este objeto. Escolha em qual cômodo da casa o objeto deve ser guardado.',
         cores: 'Jogo das cores e formas. Encontre as cartas iguais combinando cores, figuras e nomes.',
-        global: 'Movimento amplo. Toque no botão azul grande cada vez que ele mudar de posição na tela.',
+        global: 'Travessia segura na cidade. Olhe o semáforo de pedestres de cada faixa. Só clique na pessoa ou animal para atravessar quando o sinal de pedestre estiver verde. Se passar no amarelo ou vermelho, voltará para a calçada de início.',
         fina: 'Trilha precisa. Comece no círculo verde A e deslize até o círculo vermelho B sem sair da linha. Se sair da trilha, voltará ao início.'
       };
       speakText(instructions[type] || '');
@@ -1020,7 +1127,7 @@
       speakText(sensorialData[currentSensorialIdx].prompt);
     }
 
-    // 4. AUTOCONFIANÇA E PSICOLÓGICO (Persistência estritamente local)
+    // 4. AUTOCONFIANÇA E PSICOLÓGICO
     function readAffirmation() {
       const text = document.getElementById('affirmationText').innerText;
       speakText(text);
@@ -1180,24 +1287,411 @@
       }
     }
 
-    // 7. MOVIMENTO GLOBAL
-    function resetGlobalTarget() {
-      const btn = document.getElementById('globalTargetBtn');
-      const area = document.getElementById('globalPlayArea');
-      const maxX = area.clientWidth - 150;
-      const maxY = area.clientHeight - 150;
+    // 7. MOVIMENTO GLOBAL: MAPA INTERATIVO DE TRAVESSIA SEGURA
+    let crossingAnimFrame = null;
+    let crossingLastTime = 0;
 
-      const randomX = Math.max(10, Math.floor(Math.random() * maxX));
-      const randomY = Math.max(10, Math.floor(Math.random() * maxY));
+    // 3 Faixas de Pedestres com ciclos independentes de semáforo (Verde, Amarelo, Vermelho)
+    let crosswalkZones = [];
+    let pedestriansList = [];
+    let vehiclesList = [];
 
-      btn.style.left = randomX + 'px';
-      btn.style.top = randomY + 'px';
+    function updateCrossingBanner(state, message) {
+      const banner = document.getElementById('crossingAlertBanner');
+      const icon = document.getElementById('crossingAlertIcon');
+      const text = document.getElementById('globalFeedback');
+
+      banner.classList.remove(
+        'bg-sky-50', 'border-sky-300', 'text-sky-950',
+        'bg-rose-100', 'border-rose-500', 'text-rose-950',
+        'bg-amber-100', 'border-amber-500', 'text-amber-950',
+        'bg-green-100', 'border-green-500', 'text-green-950',
+        'shake-box'
+      );
+
+      if (state === 'danger') {
+        banner.classList.add('bg-rose-100', 'border-rose-500', 'text-rose-950');
+        void banner.offsetWidth;
+        banner.classList.add('shake-box');
+        icon.className = 'fa-solid fa-triangle-exclamation text-2xl text-rose-600';
+      } else if (state === 'warning') {
+        banner.classList.add('bg-amber-100', 'border-amber-500', 'text-amber-950');
+        void banner.offsetWidth;
+        banner.classList.add('shake-box');
+        icon.className = 'fa-solid fa-hand text-2xl text-amber-600';
+      } else if (state === 'success') {
+        banner.classList.add('bg-green-100', 'border-green-500', 'text-green-950');
+        icon.className = 'fa-solid fa-circle-check text-2xl text-green-600';
+      } else {
+        banner.classList.add('bg-sky-50', 'border-sky-300', 'text-sky-950');
+        icon.className = 'fa-solid fa-traffic-light text-2xl text-sky-600';
+      }
+
+      text.innerText = message;
     }
 
-    function hitGlobalTarget() {
-      speakText('Muito bem!');
-      confetti({ particleCount: 30 });
-      resetGlobalTarget();
+    function playHornOrAlertTone(isCrash = false) {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const audioCtx = new AudioCtx();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = isCrash ? 'sawtooth' : 'triangle';
+        osc.frequency.setValueAtTime(isCrash ? 190 : 280, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(isCrash ? 110 : 210, audioCtx.currentTime + 0.32);
+        gain.gain.setValueAtTime(0.16, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.32);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.34);
+      } catch (e) {}
+    }
+
+    function stopCrossingSimulation() {
+      if (crossingAnimFrame) {
+        cancelAnimationFrame(crossingAnimFrame);
+        crossingAnimFrame = null;
+      }
+    }
+
+    function initCrossingGame() {
+      stopCrossingSimulation();
+
+      // Cada faixa alterna: 'green' (6.5s) -> 'yellow' (2.5s) -> 'red' (7.5s)
+      crosswalkZones = [
+        { id: 0, xPercent: 18, state: 'green', timer: 0 },
+        { id: 1, xPercent: 50, state: 'red', timer: 1.5 },
+        { id: 2, xPercent: 82, state: 'yellow', timer: 0.5 }
+      ];
+
+      // 6 Personagens variados distribuídos pelo mapa (Idoso, Criança, Adulto, Senhora, Cachorro, Gato)
+      pedestriansList = [
+        {
+          id: 'ped-1',
+          name: 'Sr. Antônio (Idoso)',
+          icon: 'fa-person-cane',
+          badgeColor: 'bg-amber-600',
+          zoneId: 0,
+          direction: 'down', // Norte -> Sul
+          startTop: 108,
+          endTop: 400,
+          currentTop: 108,
+          status: 'waiting' // 'waiting' | 'crossing' | 'done' | 'returning'
+        },
+        {
+          id: 'ped-2',
+          name: 'Cachorrinho Rex',
+          icon: 'fa-dog',
+          badgeColor: 'bg-orange-600',
+          zoneId: 0,
+          direction: 'up', // Sul -> Norte
+          startTop: 400,
+          endTop: 108,
+          currentTop: 400,
+          status: 'waiting'
+        },
+        {
+          id: 'ped-3',
+          name: 'Menina Sofia (Criança)',
+          icon: 'fa-child-reaching',
+          badgeColor: 'bg-pink-600',
+          zoneId: 1,
+          direction: 'down',
+          startTop: 108,
+          endTop: 400,
+          currentTop: 108,
+          status: 'waiting'
+        },
+        {
+          id: 'ped-4',
+          name: 'Carlos (Adulto)',
+          icon: 'fa-person-walking',
+          badgeColor: 'bg-blue-600',
+          zoneId: 1,
+          direction: 'up',
+          startTop: 400,
+          endTop: 108,
+          currentTop: 400,
+          status: 'waiting'
+        },
+        {
+          id: 'ped-5',
+          name: 'Dona Helena (Idosa)',
+          icon: 'fa-person-dress',
+          badgeColor: 'bg-purple-600',
+          zoneId: 2,
+          direction: 'down',
+          startTop: 108,
+          endTop: 400,
+          currentTop: 108,
+          status: 'waiting'
+        },
+        {
+          id: 'ped-6',
+          name: 'Gatinho Mingau',
+          icon: 'fa-cat',
+          badgeColor: 'bg-teal-600',
+          zoneId: 2,
+          direction: 'up',
+          startTop: 400,
+          endTop: 108,
+          currentTop: 400,
+          status: 'waiting'
+        }
+      ];
+
+      // Veículos nas duas pistas: Pista Superior (direita -> esquerda) e Pista Inferior (esquerda -> direita)
+      vehiclesList = [
+        { id: 'v1', label: 'Carro', icon: 'fa-car-side', color: 'text-rose-500', laneTop: 192, dir: -1, x: 85, speed: 15 },
+        { id: 'v2', label: 'Caminhão', icon: 'fa-truck', color: 'text-amber-400', laneTop: 192, dir: -1, x: 35, speed: 13 },
+        { id: 'v3', label: 'Moto', icon: 'fa-motorcycle', color: 'text-cyan-300', laneTop: 308, dir: 1, x: 10, speed: 19 },
+        { id: 'v4', label: 'Ônibus', icon: 'fa-bus', color: 'text-emerald-400', laneTop: 308, dir: 1, x: 60, speed: 14 }
+      ];
+
+      renderCrossingLights();
+      renderCrossingPedestrians();
+      renderCrossingVehicles();
+      updateCrossingProgress();
+      updateCrossingBanner('idle', 'Observe o semáforo de cada faixa e clique na pessoa ou animal quando o sinal estiver VERDE!');
+
+      crossingLastTime = performance.now();
+      crossingAnimFrame = requestAnimationFrame(updateCrossingLoop);
+    }
+
+    function updateCrossingProgress() {
+      const doneCount = pedestriansList.filter(p => p.status === 'done').length;
+      document.getElementById('crossingProgressText').innerText = `Atravessaram em segurança: ${doneCount} de ${pedestriansList.length}`;
+    }
+
+    function renderCrossingLights() {
+      const layer = document.getElementById('crossingLightsLayer');
+      if (!layer) return;
+      layer.innerHTML = '';
+
+      crosswalkZones.forEach(zone => {
+        const isGreen = zone.state === 'green';
+        const isYellow = zone.state === 'yellow';
+        const isRed = zone.state === 'red';
+
+        const statusLabel = isGreen ? 'SIGA' : (isYellow ? 'ATENÇÃO' : 'PARE');
+        const labelBg = isGreen ? 'bg-green-600 text-white' : (isYellow ? 'bg-amber-400 text-slate-950' : 'bg-rose-600 text-white');
+
+        const pole = document.createElement('div');
+        pole.style.left = `calc(${zone.xPercent}% + 62px)`;
+        pole.style.top = '112px';
+        pole.className = 'absolute -translate-x-1/2 flex flex-col items-center';
+
+        pole.innerHTML = `
+          <div class="bg-slate-950 border-2 border-slate-500 rounded-xl p-1.5 flex flex-col items-center gap-1 shadow-lg">
+            <div class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${isRed ? 'bg-rose-500 text-white shadow-[0_0_10px_#f43f5e]' : 'bg-rose-950/60 text-rose-900'}">
+              <i class="fa-solid fa-hand"></i>
+            </div>
+            <div class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${isYellow ? 'bg-amber-400 text-slate-950 shadow-[0_0_10px_#fbbf24]' : 'bg-amber-950/60 text-amber-900'}">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${isGreen ? 'bg-green-500 text-white shadow-[0_0_10px_#22c55e]' : 'bg-green-950/60 text-green-900'}">
+              <i class="fa-solid fa-person-walking"></i>
+            </div>
+          </div>
+          <span class="${labelBg} text-[10px] font-extrabold px-2 py-0.5 rounded-full mt-1 shadow uppercase tracking-wider">${statusLabel}</span>
+        `;
+
+        layer.appendChild(pole);
+      });
+    }
+
+    function renderCrossingPedestrians() {
+      const layer = document.getElementById('crossingPedestriansLayer');
+      if (!layer) return;
+      layer.innerHTML = '';
+
+      pedestriansList.forEach(ped => {
+        const zone = crosswalkZones[ped.zoneId];
+        const btn = document.createElement('button');
+        btn.id = ped.id;
+        btn.type = 'button';
+
+        // Ligeiro deslocamento horizontal entre o boneco de cima e o de baixo para não se sobreporem
+        const offsetX = ped.direction === 'down' ? -18 : 18;
+        btn.style.left = `calc(${zone.xPercent}% + ${offsetX}px)`;
+        btn.style.top = `${ped.currentTop}px`;
+
+        const isDone = ped.status === 'done';
+        const isCrossing = ped.status === 'crossing';
+
+        let ringClass = 'border-white shadow-lg';
+        if (isDone) {
+          ringClass = 'border-green-400 ring-4 ring-green-400/60 opacity-95';
+        } else if (isCrossing) {
+          ringClass = 'border-sky-300 ring-4 ring-sky-400/70';
+        } else {
+          ringClass = 'border-white pedestrian-pulse hover:ring-4 hover:ring-teal-400';
+        }
+
+        btn.className = `pedestrian-btn absolute flex flex-col items-center focus-ring group`;
+        btn.setAttribute('aria-label', `${ped.name} - ${isDone ? 'Já atravessou' : 'Clique para atravessar'}`);
+
+        btn.innerHTML = `
+          <div class="w-14 h-14 md:w-16 md:h-16 rounded-full ${isDone ? 'bg-green-600' : ped.badgeColor} text-white border-4 ${ringClass} flex items-center justify-center text-2xl md:text-3xl">
+            <i class="fa-solid ${isDone ? 'fa-check' : ped.icon}"></i>
+          </div>
+          <span class="mt-1 px-2 py-0.5 rounded-md text-[11px] font-bold shadow whitespace-nowrap ${isDone ? 'bg-green-700 text-white' : 'bg-slate-900/90 text-white'}">
+            ${ped.name.split(' ')[0]}
+          </span>
+        `;
+
+        btn.onclick = () => handlePedestrianClick(ped.id);
+        layer.appendChild(btn);
+      });
+    }
+
+    function renderCrossingVehicles() {
+      const layer = document.getElementById('crossingVehiclesLayer');
+      if (!layer) return;
+      layer.innerHTML = '';
+
+      vehiclesList.forEach(v => {
+        const el = document.createElement('div');
+        el.id = v.id;
+        el.style.left = `${v.x}%`;
+        el.style.top = `${v.laneTop}px`;
+        el.style.transform = `translate(-50%, -50%) ${v.dir === -1 ? 'scaleX(-1)' : ''}`;
+        el.className = `absolute text-4xl md:text-5xl ${v.color} drop-shadow-[0_4px_4px_rgba(0,0,0,0.6)]`;
+        el.innerHTML = `<i class="fa-solid ${v.icon}"></i>`;
+        layer.appendChild(el);
+      });
+    }
+
+    function handlePedestrianClick(pedId) {
+      const ped = pedestriansList.find(p => p.id === pedId);
+      if (!ped) return;
+
+      if (ped.status === 'done') {
+        updateCrossingBanner('success', `${ped.name} já atravessou a rua em segurança! Clique nos outros personagens.`);
+        return;
+      }
+
+      if (ped.status === 'crossing') return;
+
+      const zone = crosswalkZones[ped.zoneId];
+
+      // Verifica o sinal do semáforo de pedestre no momento do clique
+      if (zone.state === 'red') {
+        playHornOrAlertTone(true);
+        const msg = `PERIGO! O sinal de pedestre está VERMELHO e os carros estão passando! ${ped.name} voltou para a calçada de início.`;
+        updateCrossingBanner('danger', msg);
+        speakText(`Atenção! Sinal vermelho! Os carros estão passando. ${ped.name} voltou para o início.`);
+
+        // Efeito visual de recuo rápido para o início
+        ped.currentTop = ped.direction === 'down' ? ped.startTop + 26 : ped.startTop - 26;
+        renderCrossingPedestrians();
+        setTimeout(() => {
+          ped.currentTop = ped.startTop;
+          ped.status = 'waiting';
+          renderCrossingPedestrians();
+        }, 450);
+        return;
+      }
+
+      if (zone.state === 'yellow') {
+        playHornOrAlertTone(false);
+        const msg = `ATENÇÃO! O sinal está AMARELO (prestes a fechar). ${ped.name} voltou ao início. Aguarde o sinal VERDE!`;
+        updateCrossingBanner('warning', msg);
+        speakText(`Sinal amarelo! Aguarde o sinal verde para atravessar. ${ped.name} voltou para o início.`);
+
+        ped.currentTop = ped.direction === 'down' ? ped.startTop + 20 : ped.startTop - 20;
+        renderCrossingPedestrians();
+        setTimeout(() => {
+          ped.currentTop = ped.startTop;
+          ped.status = 'waiting';
+          renderCrossingPedestrians();
+        }, 450);
+        return;
+      }
+
+      // Sinal VERDE: inicia travessia segura!
+      ped.status = 'crossing';
+      ped.currentTop = ped.endTop;
+      renderCrossingPedestrians();
+      updateCrossingBanner('success', `Muito bem! Sinal VERDE! Ajudando ${ped.name} a atravessar na faixa...`);
+      speakText(`Sinal verde! Atravessando ${ped.name} em segurança.`);
+
+      setTimeout(() => {
+        if (ped.status === 'crossing') {
+          ped.status = 'done';
+          renderCrossingPedestrians();
+          updateCrossingProgress();
+
+          const allDone = pedestriansList.every(p => p.status === 'done');
+          if (allDone) {
+            updateCrossingBanner('success', 'PARABÉNS! Você ajudou todas as pessoas e animais a atravessarem a rua com segurança!');
+            speakText('Parabéns! Você ajudou todos os pedestres e animais a atravessarem em segurança!');
+            confetti({ particleCount: 70, spread: 80, origin: { y: 0.6 } });
+          } else {
+            updateCrossingBanner('success', `${ped.name} chegou com segurança do outro lado! Continue ajudando os próximos.`);
+          }
+        }
+      }, 1150);
+    }
+
+    function updateCrossingLoop(now) {
+      const dt = Math.min((now - crossingLastTime) / 1000, 0.1);
+      crossingLastTime = now;
+
+      // 1. Atualiza o ciclo dos semáforos de cada faixa
+      let lightsChanged = false;
+      crosswalkZones.forEach(zone => {
+        zone.timer += dt;
+        if (zone.state === 'green' && zone.timer >= 6.5) {
+          zone.state = 'yellow';
+          zone.timer = 0;
+          lightsChanged = true;
+        } else if (zone.state === 'yellow' && zone.timer >= 2.5) {
+          zone.state = 'red';
+          zone.timer = 0;
+          lightsChanged = true;
+        } else if (zone.state === 'red' && zone.timer >= 7.0) {
+          zone.state = 'green';
+          zone.timer = 0;
+          lightsChanged = true;
+        }
+      });
+
+      if (lightsChanged) {
+        renderCrossingLights();
+      }
+
+      // 2. Movimenta veículos (param antes da faixa se o pedestre tiver sinal verde)
+      vehiclesList.forEach(v => {
+        let shouldStop = false;
+
+        crosswalkZones.forEach(zone => {
+          // Veículos param quando o semáforo de pedestres está verde ou amarelo
+          if (zone.state === 'green' || zone.state === 'yellow') {
+            if (v.dir === 1 && v.x < zone.xPercent - 8 && v.x > zone.xPercent - 15) {
+              shouldStop = true;
+            }
+            if (v.dir === -1 && v.x > zone.xPercent + 8 && v.x < zone.xPercent + 15) {
+              shouldStop = true;
+            }
+          }
+        });
+
+        if (!shouldStop) {
+          v.x += v.dir * v.speed * dt;
+          if (v.dir === 1 && v.x > 108) v.x = -8;
+          if (v.dir === -1 && v.x < -8) v.x = 108;
+        }
+
+        const el = document.getElementById(v.id);
+        if (el) {
+          el.style.left = `${v.x}%`;
+        }
+      });
+
+      crossingAnimFrame = requestAnimationFrame(updateCrossingLoop);
     }
 
     // 8. TRILHA PRECISA (MOTORA FINA COM DETECÇÃO RIGOROSA DE ERRO E REINÍCIO AUTOMÁTICO)
@@ -1268,7 +1762,7 @@
 
       if (state === 'error') {
         banner.classList.add('bg-rose-100', 'border-rose-500', 'text-rose-950');
-        void banner.offsetWidth; // Reinicia animação
+        void banner.offsetWidth;
         banner.classList.add('shake-box');
         icon.className = 'fa-solid fa-triangle-exclamation text-2xl text-rose-600';
       } else if (state === 'success') {
@@ -1301,9 +1795,7 @@
         gain.connect(audioCtx.destination);
         osc.start();
         osc.stop(audioCtx.currentTime + 0.26);
-      } catch (err) {
-        // Ignora caso bloqueado pelo navegador
-      }
+      } catch (err) {}
     }
 
     function initFineCanvas() {
@@ -1370,7 +1862,6 @@
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Grade pontilhada sutil de fundo para referência espacial
       ctx.fillStyle = '#CBD5E1';
       for (let gx = 25; gx < canvas.width; gx += 35) {
         for (let gy = 25; gy < canvas.height; gy += 35) {
@@ -1380,7 +1871,6 @@
         }
       }
 
-      // Borda externa da trilha (zona limite)
       ctx.save();
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
@@ -1388,19 +1878,16 @@
       ctx.strokeStyle = highlightError ? '#E11D48' : '#6366F1';
       ctx.stroke(path);
 
-      // Interior da trilha permitida
       ctx.lineWidth = cfg.width;
       ctx.strokeStyle = highlightError ? '#FFE4E6' : '#F1F5F9';
       ctx.stroke(path);
 
-      // Linha guia central tracejada
       ctx.lineWidth = 2;
       ctx.setLineDash([8, 8]);
       ctx.strokeStyle = highlightError ? '#FB7185' : '#94A3B8';
       ctx.stroke(path);
       ctx.restore();
 
-      // Traçado atual do usuário
       if (tracePoints.length > 1) {
         ctx.save();
         ctx.beginPath();
@@ -1416,7 +1903,6 @@
         ctx.restore();
       }
 
-      // Círculo de Início (A)
       ctx.beginPath();
       ctx.arc(cfg.start.x, cfg.start.y, 24, 0, Math.PI * 2);
       ctx.fillStyle = '#16A34A';
@@ -1430,7 +1916,6 @@
       ctx.textBaseline = 'middle';
       ctx.fillText('A', cfg.start.x, cfg.start.y + 1);
 
-      // Círculo de Chegada (B)
       ctx.beginPath();
       ctx.arc(cfg.end.x, cfg.end.y, 24, 0, Math.PI * 2);
       ctx.fillStyle = '#DC2626';
@@ -1457,12 +1942,10 @@
       const cfg = pathConfigs[currentPathType];
       const path = buildFinePath2D(currentPathType);
 
-      // Verifica se está dentro dos círculos A ou B
       const distStart = Math.hypot(x - cfg.start.x, y - cfg.start.y);
       const distEnd = Math.hypot(x - cfg.end.x, y - cfg.end.y);
       if (distStart <= 26 || distEnd <= 26) return true;
 
-      // Verifica geometricamente se o ponto está dentro da espessura da linha
       ctx.save();
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
@@ -1500,7 +1983,6 @@
       const cfg = pathConfigs[currentPathType];
       const distToStart = Math.hypot(pos.x - cfg.start.x, pos.y - cfg.start.y);
 
-      // Obriga o usuário a começar exatamente no ponto A
       if (distToStart > 30) {
         triggerFineFail('Comece tocando exatamente no círculo verde (A)! Nova tentativa.');
         return;
@@ -1518,7 +2000,6 @@
       const pos = getCanvasCoordinates(e);
       const cfg = pathConfigs[currentPathType];
 
-      // Verifica se tocou fora da trilha permitida
       if (!isPointInsideAllowedPath(pos.x, pos.y)) {
         triggerFineFail('Você encostou fora da linha! Voltando automaticamente ao início (A). Nova tentativa!');
         return;
@@ -1527,7 +2008,6 @@
       tracePoints.push(pos);
       drawFineScene(false);
 
-      // Verifica se alcançou o objetivo final (B)
       const distToEnd = Math.hypot(pos.x - cfg.end.x, pos.y - cfg.end.y);
       if (distToEnd <= 25 && tracePoints.length > 10) {
         isTracing = false;

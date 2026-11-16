@@ -70,6 +70,14 @@
       outline: 4px solid #2563EB;
       outline-offset: 4px;
     }
+    @keyframes shakeError {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+    .shake-box {
+      animation: shakeError 0.45s ease-in-out;
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col font-sans text-slate-900 bg-slate-50">
@@ -133,7 +141,7 @@
     </div>
   </header>
 
-  <!-- NOVA BARRA DE BUSCA E SELEÇÃO ACESSÍVEL DE ATIVIDADES (SEM ROLAGEM LATERAL) -->
+  <!-- BARRA DE BUSCA E SELEÇÃO ACESSÍVEL DE ATIVIDADES -->
   <nav aria-label="Escolha de Atividades" class="bg-slate-200/90 border-b-2 border-slate-300 shadow-sm">
     <div class="max-w-6xl mx-auto px-4 py-4 space-y-4">
       
@@ -145,7 +153,7 @@
             type="text" 
             id="activitySearchInput" 
             oninput="filterActivities()" 
-            placeholder="Procurar atividade (ex: Memória, Cores, Casa, Movimento...)" 
+            placeholder="Procurar atividade (ex: Memória, Cores, Casa, Trilha, Movimento...)" 
             aria-label="Procurar atividade pelo nome"
             class="w-full pl-12 pr-24 py-3.5 rounded-2xl border-2 border-slate-300 focus:border-teal-600 focus:outline-none bg-white text-slate-900 text-lg font-medium shadow-inner placeholder:text-slate-500"
           >
@@ -169,7 +177,7 @@
         </button>
       </div>
 
-      <!-- Grade Visível com Todas as 8 Atividades (Sem corte de texto) -->
+      <!-- Grade Visível com Todas as 8 Atividades -->
       <div id="activitiesGridContainer" class="space-y-3">
         <div id="activitiesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           
@@ -243,7 +251,7 @@
             </div>
           </button>
 
-          <button onclick="switchTab('tab-fina')" id="btn-tab-fina" data-search="8 trilha fina coordenacao desenhar caminho" class="tab-btn btn-senior bg-white/80 hover:bg-white border-2 border-slate-300 text-slate-800 p-3.5 rounded-2xl flex items-center gap-3 text-left shadow-sm focus-ring">
+          <button onclick="switchTab('tab-fina')" id="btn-tab-fina" data-search="8 trilha fina coordenacao desenhar caminho precisao" class="tab-btn btn-senior bg-white/80 hover:bg-white border-2 border-slate-300 text-slate-800 p-3.5 rounded-2xl flex items-center gap-3 text-left shadow-sm focus-ring">
             <div class="w-11 h-11 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-xl shrink-0">
               <i class="fa-solid fa-hand-pointer"></i>
             </div>
@@ -290,11 +298,9 @@
         </div>
 
         <div id="duplaGrid" class="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-2xl mx-auto">
-          <!-- Gerado via JS -->
         </div>
 
         <div id="duplaFeedback" class="min-h-[50px] flex items-center justify-center font-bold text-xl md:text-2xl">
-          <!-- Mensagem de incentivo -->
         </div>
       </div>
     </section>
@@ -520,33 +526,49 @@
       </div>
     </section>
 
-    <!-- MÓDULO 8: COORDENAÇÃO MOTORA FINA -->
+    <!-- MÓDULO 8: COORDENAÇÃO MOTORA FINA (DESAFIO DE PRECISÃO) -->
     <section id="tab-fina" class="tab-content hidden space-y-6">
       <div class="bg-indigo-50 border-l-8 border-indigo-600 p-6 rounded-2xl shadow-sm">
         <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-          <h2 class="font-heading text-2xl md:text-3xl font-bold text-indigo-900">8. Trilha Precisa (Motora Fina)</h2>
+          <h2 class="font-heading text-2xl md:text-3xl font-bold text-indigo-900">8. Trilha Precisa (Desafio Motor Fino)</h2>
           <button onclick="speakInstruction('fina')" class="btn-senior text-indigo-900 bg-indigo-200 hover:bg-indigo-300 px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 focus-ring">
             <i class="fa-solid fa-volume-high text-xl"></i> Ouvir instrução
           </button>
         </div>
         <p class="text-lg md:text-xl text-indigo-950 font-medium">
-          Guie o círculo verde do início (A) até o final (B) mantendo-se dentro do caminho marcado.
+          Comece exatamente no círculo verde <strong>(A)</strong> e deslize sem soltar até o círculo vermelho <strong>(B)</strong>. <strong>Atenção:</strong> se encostar fora da trilha, você voltará automaticamente ao início!
         </p>
       </div>
 
-      <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 shadow-md text-center space-y-4">
-        <div class="flex flex-wrap justify-center gap-3">
-          <button onclick="setFinePath('straight')" class="btn-senior bg-slate-200 hover:bg-slate-300 font-bold px-5 py-2.5 rounded-xl focus-ring">Linha Reta</button>
-          <button onclick="setFinePath('curve')" class="btn-senior bg-slate-200 hover:bg-slate-300 font-bold px-5 py-2.5 rounded-xl focus-ring">Curva Suave</button>
-          <button onclick="setFinePath('zigzag')" class="btn-senior bg-slate-200 hover:bg-slate-300 font-bold px-5 py-2.5 rounded-xl focus-ring">Ziguezague</button>
+      <div class="bg-white border-2 border-indigo-200 rounded-3xl p-6 shadow-md text-center space-y-5">
+        <!-- Seletor de Percursos Desafiadores -->
+        <div class="flex flex-wrap items-center justify-center gap-3">
+          <button id="btn-path-wave" onclick="setFinePath('wave')" class="fine-path-btn btn-senior bg-indigo-600 text-white font-bold px-5 py-2.5 rounded-xl shadow-sm focus-ring">
+            1. Ondas Suaves
+          </button>
+          <button id="btn-path-zigzag" onclick="setFinePath('zigzag')" class="fine-path-btn btn-senior bg-slate-200 hover:bg-slate-300 text-slate-900 font-bold px-5 py-2.5 rounded-xl focus-ring">
+            2. Ziguezague Estreito
+          </button>
+          <button id="btn-path-spiral" onclick="setFinePath('spiral')" class="fine-path-btn btn-senior bg-slate-200 hover:bg-slate-300 text-slate-900 font-bold px-5 py-2.5 rounded-xl focus-ring">
+            3. Labirinto em S (Difícil)
+          </button>
         </div>
 
-        <div class="relative inline-block w-full max-w-2xl bg-slate-100 rounded-2xl border-2 border-slate-300 p-2 overflow-hidden">
-          <canvas id="fineCanvas" width="600" height="300" class="w-full h-auto touch-none cursor-crosshair rounded-xl bg-white"></canvas>
+        <!-- Alerta Visual de Status / Erro / Vitória -->
+        <div id="finaAlertBanner" role="status" aria-live="assertive" class="bg-indigo-50 border-2 border-indigo-300 text-indigo-950 rounded-2xl p-4 font-bold text-lg md:text-xl flex items-center justify-center gap-3 transition-colors">
+          <i id="finaAlertIcon" class="fa-solid fa-circle-play text-2xl text-green-600"></i>
+          <span id="finaFeedback">Toque e segure no círculo verde (A) para iniciar o percurso até (B).</span>
         </div>
 
-        <div id="finaFeedback" class="min-h-[40px] font-bold text-xl text-indigo-700">
-          Mova o cursor ou o dedo do Ponto A até o Ponto B.
+        <!-- Área do Canvas de Alta Precisão -->
+        <div id="fineCanvasWrapper" class="relative inline-block w-full max-w-3xl bg-slate-100 rounded-2xl border-4 border-slate-300 p-2 overflow-hidden shadow-inner">
+          <canvas id="fineCanvas" width="700" height="340" class="w-full h-auto touch-none cursor-crosshair rounded-xl bg-white"></canvas>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-center gap-6 text-base font-bold text-slate-700">
+          <span class="flex items-center gap-2"><span class="w-4 h-4 rounded-full bg-green-600 inline-block"></span> Início (A)</span>
+          <span class="flex items-center gap-2"><span class="w-6 h-4 rounded bg-slate-200 border-2 border-indigo-500 inline-block"></span> Caminho Permitido</span>
+          <span class="flex items-center gap-2"><span class="w-4 h-4 rounded-full bg-red-600 inline-block"></span> Chegada (B)</span>
         </div>
       </div>
     </section>
@@ -620,7 +642,7 @@
     </div>
   </div>
 
-  <!-- SCRIPT DE LÓGICA, BUSCA ACESSÍVEL, PRIVACIDADE LOCAL E INTERATIVIDADE -->
+  <!-- SCRIPT DE LÓGICA, BUSCA ACESSÍVEL, TRILHA FINA DE PRECISÃO E INTERATIVIDADE -->
   <script>
     let audioEnabled = localStorage.getItem('viverAtivo_audio') !== 'false';
     const synth = window.speechSynthesis;
@@ -797,7 +819,7 @@
         objetos: 'Onde guardar este objeto. Escolha em qual cômodo da casa o objeto deve ser guardado.',
         cores: 'Jogo das cores e formas. Encontre as cartas iguais combinando cores, figuras e nomes.',
         global: 'Movimento amplo. Toque no botão azul grande cada vez que ele mudar de posição na tela.',
-        fina: 'Trilha precisa. Guie o ponto verde da letra A até a letra B por dentro do caminho.'
+        fina: 'Trilha precisa. Comece no círculo verde A e deslize até o círculo vermelho B sem sair da linha. Se sair da trilha, voltará ao início.'
       };
       speakText(instructions[type] || '');
     }
@@ -1178,94 +1200,348 @@
       resetGlobalTarget();
     }
 
-    // 8. TRILHA PRECISA (MOTORA FINA)
-    let canvas, ctx, isDrawing = false, currentPathType = 'straight';
+    // 8. TRILHA PRECISA (MOTORA FINA COM DETECÇÃO RIGOROSA DE ERRO E REINÍCIO AUTOMÁTICO)
+    let canvas, ctx;
+    let isTracing = false;
+    let traceCompleted = false;
+    let currentPathType = 'wave';
+    let tracePoints = [];
+
+    const pathConfigs = {
+      wave: {
+        width: 28,
+        start: { x: 65, y: 170 },
+        end: { x: 635, y: 170 }
+      },
+      zigzag: {
+        width: 24,
+        start: { x: 65, y: 260 },
+        end: { x: 635, y: 80 }
+      },
+      spiral: {
+        width: 22,
+        start: { x: 65, y: 75 },
+        end: { x: 635, y: 265 }
+      }
+    };
+
+    function buildFinePath2D(type) {
+      const path = new Path2D();
+      if (type === 'wave') {
+        path.moveTo(65, 170);
+        path.bezierCurveTo(170, 30, 260, 310, 350, 170);
+        path.bezierCurveTo(440, 30, 530, 310, 635, 170);
+      } else if (type === 'zigzag') {
+        path.moveTo(65, 260);
+        path.lineTo(175, 75);
+        path.lineTo(290, 265);
+        path.lineTo(405, 75);
+        path.lineTo(520, 265);
+        path.lineTo(635, 80);
+      } else if (type === 'spiral') {
+        path.moveTo(65, 75);
+        path.lineTo(570, 75);
+        path.arcTo(625, 75, 625, 125, 45);
+        path.lineTo(625, 125);
+        path.arcTo(625, 170, 570, 170, 45);
+        path.lineTo(135, 170);
+        path.arcTo(80, 170, 80, 215, 45);
+        path.lineTo(80, 220);
+        path.arcTo(80, 265, 135, 265, 45);
+        path.lineTo(635, 265);
+      }
+      return path;
+    }
+
+    function updateFinaBanner(state, message) {
+      const banner = document.getElementById('finaAlertBanner');
+      const icon = document.getElementById('finaAlertIcon');
+      const text = document.getElementById('finaFeedback');
+
+      banner.classList.remove(
+        'bg-indigo-50', 'border-indigo-300', 'text-indigo-950',
+        'bg-rose-100', 'border-rose-500', 'text-rose-950',
+        'bg-green-100', 'border-green-500', 'text-green-950',
+        'bg-amber-50', 'border-amber-400', 'text-amber-950',
+        'shake-box'
+      );
+
+      if (state === 'error') {
+        banner.classList.add('bg-rose-100', 'border-rose-500', 'text-rose-950');
+        void banner.offsetWidth; // Reinicia animação
+        banner.classList.add('shake-box');
+        icon.className = 'fa-solid fa-triangle-exclamation text-2xl text-rose-600';
+      } else if (state === 'success') {
+        banner.classList.add('bg-green-100', 'border-green-500', 'text-green-950');
+        icon.className = 'fa-solid fa-trophy text-2xl text-green-600';
+      } else if (state === 'active') {
+        banner.classList.add('bg-amber-50', 'border-amber-400', 'text-amber-950');
+        icon.className = 'fa-solid fa-pen-nib text-2xl text-amber-600';
+      } else {
+        banner.classList.add('bg-indigo-50', 'border-indigo-300', 'text-indigo-950');
+        icon.className = 'fa-solid fa-circle-play text-2xl text-green-600';
+      }
+
+      text.innerText = message;
+    }
+
+    function playErrorTone() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const audioCtx = new AudioCtx();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(140, audioCtx.currentTime + 0.25);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.26);
+      } catch (err) {
+        // Ignora caso bloqueado pelo navegador
+      }
+    }
 
     function initFineCanvas() {
       canvas = document.getElementById('fineCanvas');
       if (!canvas) return;
       ctx = canvas.getContext('2d');
 
-      canvas.onmousedown = startFineTrace;
-      canvas.onmousemove = drawFineTrace;
-      canvas.onmouseup = stopFineTrace;
+      canvas.onmousedown = (e) => { e.preventDefault(); handleFineStart(e); };
+      canvas.onmousemove = (e) => { e.preventDefault(); handleFineMove(e); };
+      canvas.onmouseup = () => handleFineRelease();
+      canvas.onmouseleave = () => {
+        if (isTracing && !traceCompleted) {
+          triggerFineFail('Você saiu da área do quadro! Voltando ao início (A). Nova tentativa!');
+        }
+      };
 
-      canvas.ontouchstart = (e) => { startFineTrace(e.touches[0]); };
-      canvas.ontouchmove = (e) => { drawFineTrace(e.touches[0]); };
-      canvas.ontouchend = stopFineTrace;
+      canvas.ontouchstart = (e) => {
+        e.preventDefault();
+        if (e.touches.length > 0) handleFineStart(e.touches[0]);
+      };
+      canvas.ontouchmove = (e) => {
+        e.preventDefault();
+        if (e.touches.length > 0) handleFineMove(e.touches[0]);
+      };
+      canvas.ontouchend = (e) => {
+        e.preventDefault();
+        handleFineRelease();
+      };
 
-      drawFinePath();
+      resetFineAttempt(false);
     }
 
     function setFinePath(type) {
       currentPathType = type;
-      drawFinePath();
+      document.querySelectorAll('.fine-path-btn').forEach(btn => {
+        btn.classList.remove('bg-indigo-600', 'text-white', 'shadow-sm');
+        btn.classList.add('bg-slate-200', 'hover:bg-slate-300', 'text-slate-900');
+      });
+      const activeBtn = document.getElementById('btn-path-' + type);
+      if (activeBtn) {
+        activeBtn.classList.remove('bg-slate-200', 'hover:bg-slate-300', 'text-slate-900');
+        activeBtn.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
+      }
+      resetFineAttempt(false);
     }
 
-    function drawFinePath() {
+    function resetFineAttempt(showErrorStyle = false, customMessage = '') {
+      isTracing = false;
+      traceCompleted = false;
+      tracePoints = [];
+      drawFineScene(showErrorStyle);
+
+      if (showErrorStyle) {
+        updateFinaBanner('error', customMessage || 'Atenção! Você saiu da linha. Voltando ao início (A) para nova tentativa.');
+      } else {
+        updateFinaBanner('idle', 'Toque e segure no círculo verde (A) para iniciar o percurso até (B).');
+      }
+    }
+
+    function drawFineScene(highlightError = false) {
       if (!ctx) return;
+      const cfg = pathConfigs[currentPathType];
+      const path = buildFinePath2D(currentPathType);
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      ctx.beginPath();
-      ctx.lineWidth = 40;
-      ctx.strokeStyle = '#E2E8F0';
+      // Grade pontilhada sutil de fundo para referência espacial
+      ctx.fillStyle = '#CBD5E1';
+      for (let gx = 25; gx < canvas.width; gx += 35) {
+        for (let gy = 25; gy < canvas.height; gy += 35) {
+          ctx.beginPath();
+          ctx.arc(gx, gy, 1.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // Borda externa da trilha (zona limite)
+      ctx.save();
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
+      ctx.lineWidth = cfg.width + 8;
+      ctx.strokeStyle = highlightError ? '#E11D48' : '#6366F1';
+      ctx.stroke(path);
 
-      if (currentPathType === 'straight') {
-        ctx.moveTo(60, 150);
-        ctx.lineTo(540, 150);
-      } else if (currentPathType === 'curve') {
-        ctx.moveTo(60, 200);
-        ctx.quadraticCurveTo(300, 30, 540, 200);
-      } else if (currentPathType === 'zigzag') {
-        ctx.moveTo(60, 200);
-        ctx.lineTo(200, 70);
-        ctx.lineTo(400, 230);
-        ctx.lineTo(540, 100);
+      // Interior da trilha permitida
+      ctx.lineWidth = cfg.width;
+      ctx.strokeStyle = highlightError ? '#FFE4E6' : '#F1F5F9';
+      ctx.stroke(path);
+
+      // Linha guia central tracejada
+      ctx.lineWidth = 2;
+      ctx.setLineDash([8, 8]);
+      ctx.strokeStyle = highlightError ? '#FB7185' : '#94A3B8';
+      ctx.stroke(path);
+      ctx.restore();
+
+      // Traçado atual do usuário
+      if (tracePoints.length > 1) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.lineWidth = 8;
+        ctx.strokeStyle = highlightError ? '#E11D48' : '#2563EB';
+        ctx.moveTo(tracePoints[0].x, tracePoints[0].y);
+        for (let i = 1; i < tracePoints.length; i++) {
+          ctx.lineTo(tracePoints[i].x, tracePoints[i].y);
+        }
+        ctx.stroke();
+        ctx.restore();
       }
-      ctx.stroke();
 
-      // Ponto A
+      // Círculo de Início (A)
       ctx.beginPath();
-      ctx.arc(60, currentPathType === 'zigzag' ? 200 : (currentPathType === 'curve' ? 200 : 150), 20, 0, Math.PI * 2);
+      ctx.arc(cfg.start.x, cfg.start.y, 24, 0, Math.PI * 2);
       ctx.fillStyle = '#16A34A';
       ctx.fill();
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = '#FFFFFF';
+      ctx.stroke();
       ctx.fillStyle = '#FFFFFF';
-      ctx.font = 'bold 16px sans-serif';
-      ctx.fillText('A', 55, currentPathType === 'zigzag' ? 205 : (currentPathType === 'curve' ? 205 : 155));
+      ctx.font = 'bold 20px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('A', cfg.start.x, cfg.start.y + 1);
 
-      // Ponto B
+      // Círculo de Chegada (B)
       ctx.beginPath();
-      ctx.arc(540, currentPathType === 'zigzag' ? 100 : (currentPathType === 'curve' ? 200 : 150), 20, 0, Math.PI * 2);
+      ctx.arc(cfg.end.x, cfg.end.y, 24, 0, Math.PI * 2);
       ctx.fillStyle = '#DC2626';
       ctx.fill();
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = '#FFFFFF';
+      ctx.stroke();
       ctx.fillStyle = '#FFFFFF';
-      ctx.fillText('B', 535, currentPathType === 'zigzag' ? 105 : (currentPathType === 'curve' ? 205 : 155));
+      ctx.font = 'bold 20px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('B', cfg.end.x, cfg.end.y + 1);
     }
 
-    function startFineTrace(e) {
-      isDrawing = true;
-      drawFineTrace(e);
-    }
-
-    function drawFineTrace(e) {
-      if (!isDrawing) return;
+    function getCanvasCoordinates(e) {
       const rect = canvas.getBoundingClientRect();
-      const x = (e.clientX - rect.left) * (canvas.width / rect.getBoundingClientRect().width);
-      const y = (e.clientY - rect.top) * (canvas.height / rect.getBoundingClientRect().height);
-
-      ctx.beginPath();
-      ctx.arc(x, y, 8, 0, Math.PI * 2);
-      ctx.fillStyle = '#2563EB';
-      ctx.fill();
+      return {
+        x: (e.clientX - rect.left) * (canvas.width / rect.width),
+        y: (e.clientY - rect.top) * (canvas.height / rect.height)
+      };
     }
 
-    function stopFineTrace() {
-      if (!isDrawing) return;
-      isDrawing = false;
-      document.getElementById('finaFeedback').innerText = 'Excelente traçado! Continue treinando.';
-      speakText('Excelente traçado!');
+    function isPointInsideAllowedPath(x, y) {
+      const cfg = pathConfigs[currentPathType];
+      const path = buildFinePath2D(currentPathType);
+
+      // Verifica se está dentro dos círculos A ou B
+      const distStart = Math.hypot(x - cfg.start.x, y - cfg.start.y);
+      const distEnd = Math.hypot(x - cfg.end.x, y - cfg.end.y);
+      if (distStart <= 26 || distEnd <= 26) return true;
+
+      // Verifica geometricamente se o ponto está dentro da espessura da linha
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.lineWidth = cfg.width + 6;
+      const inside = ctx.isPointInStroke(path, x, y);
+      ctx.restore();
+      return inside;
+    }
+
+    function triggerFineFail(reasonText) {
+      isTracing = false;
+      playErrorTone();
+      speakText('Ops! Saiu da linha. Voltando ao início para uma nova tentativa.');
+      drawFineScene(true);
+      updateFinaBanner('error', reasonText);
+
+      const wrapper = document.getElementById('fineCanvasWrapper');
+      wrapper.classList.remove('border-slate-300');
+      wrapper.classList.add('border-rose-500');
+
+      setTimeout(() => {
+        wrapper.classList.remove('border-rose-500');
+        wrapper.classList.add('border-slate-300');
+        tracePoints = [];
+        drawFineScene(false);
+      }, 900);
+    }
+
+    function handleFineStart(e) {
+      if (traceCompleted) {
+        resetFineAttempt(false);
+      }
+
+      const pos = getCanvasCoordinates(e);
+      const cfg = pathConfigs[currentPathType];
+      const distToStart = Math.hypot(pos.x - cfg.start.x, pos.y - cfg.start.y);
+
+      // Obriga o usuário a começar exatamente no ponto A
+      if (distToStart > 30) {
+        triggerFineFail('Comece tocando exatamente no círculo verde (A)! Nova tentativa.');
+        return;
+      }
+
+      isTracing = true;
+      tracePoints = [{ x: cfg.start.x, y: cfg.start.y }, pos];
+      drawFineScene(false);
+      updateFinaBanner('active', 'Muito bem! Siga devagar por dentro do caminho até o círculo vermelho (B)...');
+    }
+
+    function handleFineMove(e) {
+      if (!isTracing || traceCompleted) return;
+
+      const pos = getCanvasCoordinates(e);
+      const cfg = pathConfigs[currentPathType];
+
+      // Verifica se tocou fora da trilha permitida
+      if (!isPointInsideAllowedPath(pos.x, pos.y)) {
+        triggerFineFail('Você encostou fora da linha! Voltando automaticamente ao início (A). Nova tentativa!');
+        return;
+      }
+
+      tracePoints.push(pos);
+      drawFineScene(false);
+
+      // Verifica se alcançou o objetivo final (B)
+      const distToEnd = Math.hypot(pos.x - cfg.end.x, pos.y - cfg.end.y);
+      if (distToEnd <= 25 && tracePoints.length > 10) {
+        isTracing = false;
+        traceCompleted = true;
+        updateFinaBanner('success', 'Parabéns! Você completou a trilha com firmeza e precisão!');
+        speakText('Parabéns! Você completou toda a trilha com muita precisão!');
+        confetti({ particleCount: 60, spread: 70, origin: { y: 0.7 } });
+      }
+    }
+
+    function handleFineRelease() {
+      if (isTracing && !traceCompleted) {
+        triggerFineFail('Você soltou antes de chegar ao ponto (B)! Voltando ao início (A). Nova tentativa!');
+      }
     }
 
     // Inicialização ao carregar

@@ -82,6 +82,13 @@
       0%, 100% { transform: translate(-50%, -50%) scale(1); }
       50% { transform: translate(-50%, -50%) scale(1.08); }
     }
+    @keyframes fadeAffirmation {
+      0% { opacity: 0; transform: translateY(6px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .affirmation-animate {
+      animation: fadeAffirmation 0.4s ease-out;
+    }
     .pedestrian-btn {
       transition: top 1.1s ease-in-out, left 0.4s ease, transform 0.2s ease, box-shadow 0.2s ease;
       transform: translate(-50%, -50%);
@@ -226,7 +233,7 @@
             </div>
           </button>
 
-          <button onclick="switchTab('tab-psico')" id="btn-tab-psico" data-search="4 autoconfianca mural positivo conquistas" class="tab-btn btn-senior bg-white/80 hover:bg-white border-2 border-slate-300 text-slate-800 p-3.5 rounded-2xl flex items-center gap-3 text-left shadow-sm focus-ring">
+          <button onclick="switchTab('tab-psico')" id="btn-tab-psico" data-search="4 autoconfianca mural positivo conquistas afirmacao motivacao" class="tab-btn btn-senior bg-white/80 hover:bg-white border-2 border-slate-300 text-slate-800 p-3.5 rounded-2xl flex items-center gap-3 text-left shadow-sm focus-ring">
             <div class="w-11 h-11 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center text-xl shrink-0">
               <i class="fa-solid fa-sun"></i>
             </div>
@@ -396,7 +403,7 @@
       </div>
     </section>
 
-    <!-- MÓDULO 4: FATORES PSICOLÓGICOS E CRENÇAS LIMITANTES -->
+    <!-- MÓDULO 4: FATORES PSICOLÓGICOS E CRENÇAS LIMITANTES (MURAL DE AFIRMAÇÕES DINÂMICAS) -->
     <section id="tab-psico" class="tab-content hidden space-y-6">
       <div class="bg-rose-50 border-l-8 border-rose-600 p-6 rounded-2xl shadow-sm">
         <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
@@ -406,20 +413,29 @@
           </button>
         </div>
         <p class="text-lg md:text-xl text-rose-950 font-medium">
-          Sem pressa, sem pontuação e sem erros. Fortaleça sua mente e comemore cada pequena conquista diária.
+          Sem pressa, sem pontuação e sem erros. Fortaleça sua mente com afirmações positivas e comemore cada pequena conquista diária.
         </p>
       </div>
 
       <div class="bg-white border-2 border-rose-200 rounded-3xl p-6 md:p-8 shadow-md space-y-8">
         <div class="bg-gradient-to-br from-rose-500 to-amber-500 text-white rounded-3xl p-8 text-center shadow-lg relative overflow-hidden">
           <i class="fa-solid fa-quote-left text-white/20 text-6xl absolute top-4 left-4"></i>
-          <h3 class="text-sm font-bold uppercase tracking-widest text-rose-100 mb-2">Pensamento Positivo do Dia</h3>
-          <p id="affirmationText" class="text-2xl md:text-3xl font-heading font-bold relative z-10 my-4 leading-relaxed">
-            "No meu próprio tempo, eu continuo aprendendo, praticando e evoluindo todos os dias!"
+          <div class="flex items-center justify-center gap-2 mb-2">
+            <span id="affirmationBadge" class="bg-white/20 backdrop-blur-sm text-white text-xs font-bold uppercase tracking-widest px-3.5 py-1 rounded-full">
+              Afirmação Positiva
+            </span>
+          </div>
+          <p id="affirmationText" class="text-2xl md:text-3xl font-heading font-bold relative z-10 my-5 leading-relaxed min-h-[84px] flex items-center justify-center">
+            "Eu sou capaz, minha mente é ativa e eu aprendo coisas novas todos os dias no meu próprio tempo!"
           </p>
-          <button onclick="readAffirmation()" class="btn-senior inline-flex items-center gap-2 bg-white text-rose-700 hover:bg-rose-50 font-bold px-6 py-3 rounded-full text-lg shadow-md focus-ring">
-            <i class="fa-solid fa-volume-high"></i> Ouvir em Voz Alta
-          </button>
+          <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+            <button onclick="readAffirmation()" class="btn-senior inline-flex items-center gap-2 bg-white text-rose-700 hover:bg-rose-50 font-bold px-6 py-3 rounded-full text-lg shadow-md focus-ring">
+              <i class="fa-solid fa-volume-high"></i> Ouvir em Voz Alta
+            </button>
+            <button onclick="nextAffirmation(true)" class="btn-senior inline-flex items-center gap-2 bg-rose-900/40 hover:bg-rose-900/60 text-white border-2 border-white/80 font-bold px-6 py-3 rounded-full text-lg shadow-md focus-ring">
+              <i class="fa-solid fa-sparkles"></i> Nova Afirmação
+            </button>
+          </div>
         </div>
 
         <div class="space-y-4">
@@ -744,7 +760,7 @@
     </div>
   </div>
 
-  <!-- SCRIPT DE LÓGICA, TRAVESSIA SEGURA, BUSCA ACESSÍVEL E INTERATIVIDADE -->
+  <!-- SCRIPT DE LÓGICA, MURAL DE AFIRMAÇÕES, TRAVESSIA SEGURA E INTERATIVIDADE -->
   <script>
     let audioEnabled = localStorage.getItem('viverAtivo_audio') !== 'false';
     const synth = window.speechSynthesis;
@@ -887,7 +903,6 @@
         btn.classList.add('border-2', 'border-slate-300', 'bg-white/80', 'text-slate-800', 'shadow-sm');
       });
 
-      // Pausa o loop de tráfego quando sair da aba 7
       if (tabId !== 'tab-global') {
         stopCrossingSimulation();
       }
@@ -910,7 +925,10 @@
       if (tabId === 'tab-dupla') initDuplaTask();
       if (tabId === 'tab-retencao') initRetencaoTask();
       if (tabId === 'tab-sensorial') initSensorialTask();
-      if (tabId === 'tab-psico') loadSavedAchievements();
+      if (tabId === 'tab-psico') {
+        loadSavedAchievements();
+        nextAffirmation(false);
+      }
       if (tabId === 'tab-objetos') loadObjectQuestion();
       if (tabId === 'tab-cores') initColorMemory();
       if (tabId === 'tab-global') initCrossingGame();
@@ -922,7 +940,7 @@
         dupla: 'Atividade de dupla tarefa. Preste atenção à ordem de forma e cor pedidas simultaneamente.',
         retencao: 'Retenção e memória. Observe os símbolos, memorize a sequência e repita sem pressa.',
         sensorial: 'Percepção sensorial. Associe o som ou a imagem à função corporal correspondente.',
-        psico: 'Mural da autoconfiança. Leia a mensagem do dia e registre suas vitórias diárias no seu tempo.',
+        psico: 'Mural da autoconfiança. Leia ou escute sua frase de afirmação positiva e registre suas vitórias diárias no seu tempo.',
         objetos: 'Onde guardar este objeto. Escolha em qual cômodo da casa o objeto deve ser guardado.',
         cores: 'Jogo das cores e formas. Encontre as cartas iguais combinando cores, figuras e nomes.',
         global: 'Travessia segura na cidade. Olhe o semáforo de pedestres de cada faixa. Só clique na pessoa ou animal para atravessar quando o sinal de pedestre estiver verde. Se passar no amarelo ou vermelho, voltará para a calçada de início.',
@@ -1127,9 +1145,49 @@
       speakText(sensorialData[currentSensorialIdx].prompt);
     }
 
-    // 4. AUTOCONFIANÇA E PSICOLÓGICO
+    // 4. MURAL DA AUTOCONFIANÇA (FRASES DE AFIRMAÇÃO, MOTIVAÇÃO E INCENTIVO SEMPRE VARIADAS)
+    const positiveAffirmations = [
+      { category: "Afirmação de Capacidade", text: "Eu sou capaz, minha mente é ativa e eu aprendo coisas novas todos os dias no meu próprio tempo!" },
+      { category: "Afirmação de Sabedoria", text: "Eu carrego uma história linda de superações e tenho toda a sabedoria necessária para vencer os desafios de hoje!" },
+      { category: "Afirmação de Vitalidade", text: "Eu cuido do meu corpo e da minha mente com carinho, e cada pequeno passo que dou fortalece minha saúde!" },
+      { category: "Afirmação de Memória", text: "Eu confio na minha memória, tenho paciência comigo mesmo e celebro cada lembrança e conquista!" },
+      { category: "Afirmação de Coragem", text: "Eu tenho coragem para experimentar, aprender e me divertir sem pressa e sem medo de errar!" },
+      { category: "Afirmação de Autoestima", text: "Eu mereço respeito, alegria e bem-estar; minha presença ilumina a vida das pessoas ao meu redor!" },
+      { category: "Afirmação de Evolução", text: "Eu sou mais forte do que imagino, e a cada exercício realizado minha mente fica mais ágil e confiante!" },
+      { category: "Afirmação de Tranquilidade", text: "Eu respeito o meu ritmo natural, respiro fundo com serenidade e sigo avançando com determinação!" },
+      { category: "Afirmação de Independência", text: "Eu sou protagonista da minha própria jornada e cada esforço diário aumenta minha autonomia e segurança!" },
+      { category: "Afirmação de Gratidão", text: "Eu me orgulho de quem eu sou, valorizo minhas conquistas de hoje e acredito no meu potencial!" },
+      { category: "Afirmação de Foco", text: "Eu mantenho minha atenção tranquila, supero cada etapa com calma e sinto alegria ao concluir minhas tarefas!" },
+      { category: "Afirmação de Energia", text: "Eu renovo minhas energias a cada sorriso, a cada movimento e a cada nova descoberta nesta plataforma!" }
+    ];
+    let lastAffirmationIdx = -1;
+
+    function nextAffirmation(shouldSpeak = false) {
+      let nextIdx;
+      do {
+        nextIdx = Math.floor(Math.random() * positiveAffirmations.length);
+      } while (nextIdx === lastAffirmationIdx && positiveAffirmations.length > 1);
+
+      lastAffirmationIdx = nextIdx;
+      const item = positiveAffirmations[nextIdx];
+
+      const badgeEl = document.getElementById('affirmationBadge');
+      const textEl = document.getElementById('affirmationText');
+      if (!textEl) return;
+
+      if (badgeEl) badgeEl.innerText = item.category;
+      textEl.classList.remove('affirmation-animate');
+      void textEl.offsetWidth;
+      textEl.classList.add('affirmation-animate');
+      textEl.innerText = `"${item.text}"`;
+
+      if (shouldSpeak) {
+        speakText(item.text);
+      }
+    }
+
     function readAffirmation() {
-      const text = document.getElementById('affirmationText').innerText;
+      const text = document.getElementById('affirmationText').innerText.replace(/"/g, '');
       speakText(text);
     }
 
@@ -1165,14 +1223,17 @@
       applyAchievementStyle(btn, newState);
 
       if (newState) {
-        speakText('Parabéns pela conquista realizada hoje!');
-        confetti({ particleCount: 30, origin: { y: 0.8 } });
+        nextAffirmation(false);
+        const currentAffirmation = document.getElementById('affirmationText').innerText.replace(/"/g, '');
+        speakText(`Parabéns pela conquista! Lembre-se: ${currentAffirmation}`);
+        confetti({ particleCount: 35, origin: { y: 0.8 } });
       }
     }
 
     function clearLocalAchievements() {
       localStorage.removeItem('viverAtivo_achievements');
       loadSavedAchievements();
+      nextAffirmation(false);
       speakText('Marcações limpas com sucesso.');
     }
 
@@ -1291,7 +1352,6 @@
     let crossingAnimFrame = null;
     let crossingLastTime = 0;
 
-    // 3 Faixas de Pedestres com ciclos independentes de semáforo (Verde, Amarelo, Vermelho)
     let crosswalkZones = [];
     let pedestriansList = [];
     let vehiclesList = [];
@@ -1359,14 +1419,12 @@
     function initCrossingGame() {
       stopCrossingSimulation();
 
-      // Cada faixa alterna: 'green' (6.5s) -> 'yellow' (2.5s) -> 'red' (7.5s)
       crosswalkZones = [
         { id: 0, xPercent: 18, state: 'green', timer: 0 },
         { id: 1, xPercent: 50, state: 'red', timer: 1.5 },
         { id: 2, xPercent: 82, state: 'yellow', timer: 0.5 }
       ];
 
-      // 6 Personagens variados distribuídos pelo mapa (Idoso, Criança, Adulto, Senhora, Cachorro, Gato)
       pedestriansList = [
         {
           id: 'ped-1',
@@ -1374,11 +1432,11 @@
           icon: 'fa-person-cane',
           badgeColor: 'bg-amber-600',
           zoneId: 0,
-          direction: 'down', // Norte -> Sul
+          direction: 'down',
           startTop: 108,
           endTop: 400,
           currentTop: 108,
-          status: 'waiting' // 'waiting' | 'crossing' | 'done' | 'returning'
+          status: 'waiting'
         },
         {
           id: 'ped-2',
@@ -1386,7 +1444,7 @@
           icon: 'fa-dog',
           badgeColor: 'bg-orange-600',
           zoneId: 0,
-          direction: 'up', // Sul -> Norte
+          direction: 'up',
           startTop: 400,
           endTop: 108,
           currentTop: 400,
@@ -1442,7 +1500,6 @@
         }
       ];
 
-      // Veículos nas duas pistas: Pista Superior (direita -> esquerda) e Pista Inferior (esquerda -> direita)
       vehiclesList = [
         { id: 'v1', label: 'Carro', icon: 'fa-car-side', color: 'text-rose-500', laneTop: 192, dir: -1, x: 85, speed: 15 },
         { id: 'v2', label: 'Caminhão', icon: 'fa-truck', color: 'text-amber-400', laneTop: 192, dir: -1, x: 35, speed: 13 },
@@ -1513,7 +1570,6 @@
         btn.id = ped.id;
         btn.type = 'button';
 
-        // Ligeiro deslocamento horizontal entre o boneco de cima e o de baixo para não se sobreporem
         const offsetX = ped.direction === 'down' ? -18 : 18;
         btn.style.left = `calc(${zone.xPercent}% + ${offsetX}px)`;
         btn.style.top = `${ped.currentTop}px`;
@@ -1577,14 +1633,12 @@
 
       const zone = crosswalkZones[ped.zoneId];
 
-      // Verifica o sinal do semáforo de pedestre no momento do clique
       if (zone.state === 'red') {
         playHornOrAlertTone(true);
         const msg = `PERIGO! O sinal de pedestre está VERMELHO e os carros estão passando! ${ped.name} voltou para a calçada de início.`;
         updateCrossingBanner('danger', msg);
         speakText(`Atenção! Sinal vermelho! Os carros estão passando. ${ped.name} voltou para o início.`);
 
-        // Efeito visual de recuo rápido para o início
         ped.currentTop = ped.direction === 'down' ? ped.startTop + 26 : ped.startTop - 26;
         renderCrossingPedestrians();
         setTimeout(() => {
@@ -1611,7 +1665,6 @@
         return;
       }
 
-      // Sinal VERDE: inicia travessia segura!
       ped.status = 'crossing';
       ped.currentTop = ped.endTop;
       renderCrossingPedestrians();
@@ -1640,7 +1693,6 @@
       const dt = Math.min((now - crossingLastTime) / 1000, 0.1);
       crossingLastTime = now;
 
-      // 1. Atualiza o ciclo dos semáforos de cada faixa
       let lightsChanged = false;
       crosswalkZones.forEach(zone => {
         zone.timer += dt;
@@ -1663,12 +1715,10 @@
         renderCrossingLights();
       }
 
-      // 2. Movimenta veículos (param antes da faixa se o pedestre tiver sinal verde)
       vehiclesList.forEach(v => {
         let shouldStop = false;
 
         crosswalkZones.forEach(zone => {
-          // Veículos param quando o semáforo de pedestres está verde ou amarelo
           if (zone.state === 'green' || zone.state === 'yellow') {
             if (v.dir === 1 && v.x < zone.xPercent - 8 && v.x > zone.xPercent - 15) {
               shouldStop = true;
@@ -2028,6 +2078,7 @@
     window.onload = () => {
       updateAudioUI();
       loadSavedAchievements();
+      nextAffirmation(false);
       initDuplaTask();
     };
   </script>
